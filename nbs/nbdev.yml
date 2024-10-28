@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "llmcam"
+  site-url: "https://ninjalabo.github.io/llmcam"
+  description: "llm camera project"
+  repo-branch: main
+  repo-url: "https://github.com/ninjalabo/llmcam"
