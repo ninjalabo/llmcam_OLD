@@ -5,4 +5,8 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://ninjalabo.github.io',
                 'git_url': 'https://github.com/ninjalabo/llmcam',
                 'lib_path': 'llmcam'},
-  'syms': {'llmcam.core': {'llmcam.core.foo': ('core.html#foo', 'llmcam/core.py')}}}
+  'syms': { 'llmcam.chat_ui': { 'llmcam.chat_ui.ChatInput': ('chat_ui.html#chatinput', 'llmcam/chat_ui.py'),
+                                'llmcam.chat_ui.ChatMessage': ('chat_ui.html#chatmessage', 'llmcam/chat_ui.py'),
+                                'llmcam.chat_ui.index': ('chat_ui.html#index', 'llmcam/chat_ui.py'),
+                                'llmcam.chat_ui.send': ('chat_ui.html#send', 'llmcam/chat_ui.py')},
+            'llmcam.core': {'llmcam.core.foo': ('core.html#foo', 'llmcam/core.py')}}}
