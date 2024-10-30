@@ -5,6 +5,6 @@ website:
       - 00_core.ipynb
       - 01_ytlive.ipynb
       - 02_gpt4v.ipynb
-      - 03_chat_ui.ipynb
       - 03_class_to_oas.ipynb
+      - 05_chat_ui.ipynb
       - oas_to_fc.ipynb
