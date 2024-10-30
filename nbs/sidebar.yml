@@ -3,6 +3,8 @@ website:
     contents:
       - index.ipynb
       - 00_core.ipynb
-      - 00_ytlive.ipynb
-      - oas_to_fc.ipynb
+      - 01_ytlive.ipynb
+      - 02_gpt4v.ipynb
       - 03_chat_ui.ipynb
+      - 03_class_to_oas.ipynb
+      - oas_to_fc.ipynb
