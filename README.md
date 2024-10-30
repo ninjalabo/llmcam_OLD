@@ -69,6 +69,6 @@ $ pip install -e . ['dev']
 Start by importing our modules:
 
 ``` python
-from llmcam.ytlive import YouTubeLive
-from llmcam.gpt4v import gpt4v
+from llmcam.ytlive import capture_youtube_live_frame
+from llmcam.gpt4v import ask_gpt4v
 ```
