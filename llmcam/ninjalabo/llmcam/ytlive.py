@@ -8,7 +8,7 @@ __all__ = ['YouTubeLive']
 # %% ../../../nbs/01_ytlive.ipynb 3
 import yt_dlp as youtube_dl
 
-# %% ../../../nbs/01_ytlive.ipynb 10
+# %% ../../../nbs/01_ytlive.ipynb 9
 import cv2
 import yt_dlp as youtube_dl
 import time
