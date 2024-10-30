@@ -58,10 +58,17 @@ package manager specific guidelines on
 
 ## How to use
 
-Fill me in please! Don’t forget code examples:
+In development mode, navigate to the local repository and install the
+editable version:
 
-``` python
-1+1
+``` sh
+$ cd /path/to/llmcam/repository
+$ pip install -e . ['dev']
 ```
 
-    2
+Start by importing our modules:
+
+``` python
+from llmcam.ninjalabo.llmcam.ytlive import *
+from llmcam.ninjalabo.llmcam.gpt4v import *
+```
