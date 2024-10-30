@@ -3,5 +3,5 @@ website:
     contents:
       - index.ipynb
       - 00_core.ipynb
-      - 02_chat_ui.ipynb
+      - 03_chat_ui.ipynb
       - oas_to_fc.ipynb
