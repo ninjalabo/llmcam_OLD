@@ -69,6 +69,15 @@ $ pip install -e . ['dev']
 Start by importing our modules:
 
 ``` python
-from llmcam.ninjalabo.llmcam.ytlive import *
-from llmcam.ninjalabo.llmcam.gpt4v import *
+from llmcam.ytlive import YouTubeLive
+from llmcam.gpt4v import gpt4v
 ```
+
+    ModuleNotFoundError: No module named 'llmcam'
+    [0;31m---------------------------------------------------------------------------[0m
+    [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
+    Cell [0;32mIn[4], line 1[0m
+    [0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mllmcam[39;00m[38;5;21;01m.[39;00m[38;5;21;01mytlive[39;00m [38;5;28;01mimport[39;00m YouTubeLive
+    [1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mllmcam[39;00m[38;5;21;01m.[39;00m[38;5;21;01mgpt4v[39;00m [38;5;28;01mimport[39;00m gpt4v
+
+    [0;31mModuleNotFoundError[0m: No module named 'llmcam'
