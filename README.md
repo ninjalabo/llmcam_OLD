@@ -72,3 +72,34 @@ Start by importing our modules:
 from llmcam.ytlive import capture_youtube_live_frame
 from llmcam.gpt4v import ask_gpt4v
 ```
+
+``` python
+fn = capture_youtube_live_frame()
+fn
+```
+
+    [youtube] Extracting URL: https://www.youtube.com/watch?v=LMZQ7eFhm58
+    [youtube] LMZQ7eFhm58: Downloading webpage
+    [youtube] LMZQ7eFhm58: Downloading ios player API JSON
+    [youtube] LMZQ7eFhm58: Downloading web creator player API JSON
+    [youtube] LMZQ7eFhm58: Downloading m3u8 information
+    30.10.2024 21:55:57 Tuomiokirkko
+
+    PosixPath('../data/cap_2024.10.30_21:55:57_Tuomiokirkko.jpg')
+
+``` python
+ask_gpt4v(fn)
+```
+
+    {'timestamp': '2024-10-30T21:55:57',
+     'location': 'Tuomiokirkko',
+     'dimensions': {'width': 1280, 'height': 720},
+     'buildings': {'number_of_buildings': 15,
+      'building_height_range': '2-5 stories'},
+     'vehicles': {'number_of_vehicles': 0},
+     'waterbodies': {'visible': False},
+     'street_lights': {'number_of_street_lights': 25},
+     'people': {'approximate_number': 0},
+     'lighting': {'time_of_day': 'night', 'artificial_lighting': 'prominent'},
+     'visibility': {'clear': True},
+     'sky': {'visible': True, 'light_conditions': 'night'}}
