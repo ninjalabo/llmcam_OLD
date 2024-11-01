@@ -23,7 +23,7 @@ from .gpt4v import ask_gpt4v
 def extract_live_info(
         link: Optional[str] = None  # YouTube Live link
     ) -> dict:  # The extracted information
-    """Extarct information from a YouTube Live"""
+    """Extract information from a YouTube Live"""
     if link:
         image = capture_youtube_live_frame(link)
     else:
@@ -229,8 +229,8 @@ def ActionButton(
 
 def ActionPanel():  # Returns a panel of action buttons
     return Div(
-        ActionButton("Do something"),
-        ActionButton("A different action"),
+        ActionButton("Introduce your model GPT-4o"),
+        ActionButton("Extract information from a YouTube Live"),
         cls="flex flex-row h-fit px-24 gap-4 pt-4"
     )
 
