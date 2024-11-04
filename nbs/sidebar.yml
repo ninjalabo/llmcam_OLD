@@ -7,4 +7,5 @@ website:
       - 02_gpt4v.ipynb
       - 03_class_to_oas.ipynb
       - 05_chat_ui.ipynb
+      - 06_fn_to_fc.ipynb
       - oas_to_fc.ipynb
