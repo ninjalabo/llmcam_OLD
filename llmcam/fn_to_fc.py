@@ -59,25 +59,25 @@ def tool_schema(func):
 # Support functions to handle tool response,where res == response.choices[0].message
 def fn_name(res): return res.tool_calls[0].function.name
 def fn_args(res): return json.loads(res.tool_calls[0].function.arguments)    
-def fn_exec(res):
+def fn_exec(res, aux_fn):
     fn = globals().get(fn_name(res))
     if fn: return fn(**fn_args(res))
-    pass # FIXME
+    aux_fn(**fn_args(res))
     
-def fn_result_content(res):
+def fn_result_content(res, aux_fn):
     """Create a content containing the result of the function call"""
     content = dict()
     content.update(fn_args(res))
-    content.update({fn_name(res): fn_exec(res)})
+    content.update({fn_name(res): fn_exec(res, aux_fn)})
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 10
-def complete(messages, role, content, tools, tool_call_id=None):
+def complete(messages, role, content, tools, tool_call_id=None, aux_fn=None):
     "Send completion request with messages, and save the response in messages again"
     messages.append({"role":role, "content":content, "tool_call_id":tool_call_id})
     response = openai.chat.completions.create(model="gpt-4o", messages=messages, tools=tools)
     res = response.choices[0].message
     messages.append(res.to_dict())
     if res.to_dict().get('tool_calls'):
-        complete(messages, role="tool", content=fn_result_content(res), tools=tools, tool_call_id=res.tool_calls[0].id)
+        complete(messages, role="tool", content=fn_result_content(res, aux_fn), tools=tools, tool_call_id=res.tool_calls[0].id, aux_fn=aux_fn)
     return messages[-1]['role'], messages[-1]['content']
