@@ -31,6 +31,25 @@ def get_request_body_from_schema(operation, oas):
             return {"title": "Example Task", "completed": False}  # Example structure
     return None
 
+# %% ../nbs/oas_to_requests.ipynb 7
+def __generate_request_by_operation_id(oas, operation_id, parameters=None, data=None):
+    # Search for the operation by `operationId`
+    for path, path_item in oas.paths.items():
+        for method, operation in path_item.dict().items():
+            if operation and operation.get("operationId") == operation_id:
+                url = f"{BASE_URL}{path}"
+                headers = {"Content-Type": "application/json"}
+                
+                # Determine request body: use `data` if provided; otherwise, generate from schema
+                request_body = data or get_request_body_from_schema(operation, oas)
+
+                # Make the HTTP request dynamically
+                response = requests.request(method.upper(), url, params=parameters, json=request_body, headers=headers)
+                print(url, request_body)
+                return response.json() if response.status_code in (200, 201) else response.status_code
+    print(f"OperationId '{operation_id}' not found.")
+    return None
+
 # %% ../nbs/oas_to_requests.ipynb 8
 def generate_request_by_operation_id(operation_id, parameters=None, data=None):
     return __generate_request_by_operation_id(oas, operation_id, parameters, data)

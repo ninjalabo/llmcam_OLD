@@ -62,7 +62,7 @@ def fn_args(res): return json.loads(res.tool_calls[0].function.arguments)
 def fn_exec(res, aux_fn):
     fn = globals().get(fn_name(res))
     if fn: return fn(**fn_args(res))
-    aux_fn(**fn_args(res))
+    aux_fn(fn_name(res), **fn_args(res))
     
 def fn_result_content(res, aux_fn):
     """Create a content containing the result of the function call"""
