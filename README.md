@@ -71,6 +71,7 @@ Start by importing our modules:
 ``` python
 from llmcam.ytlive import capture_youtube_live_frame
 from llmcam.gpt4v import ask_gpt4v
+from llmcam.chat_ui import llmcam_chatbot
 ```
 
 ``` python
@@ -103,3 +104,8 @@ ask_gpt4v(fn)
      'lighting': {'time_of_day': 'night', 'artificial_lighting': 'prominent'},
      'visibility': {'clear': True},
      'sky': {'visible': True, 'light_conditions': 'night'}}
+
+``` python
+# Start the application on port 5001
+llmcam_chatbot()
+```

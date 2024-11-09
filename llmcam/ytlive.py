@@ -105,5 +105,6 @@ def capture_youtube_live_frame(youtube_live_url:str=nakyma_helsinkigista_youtube
         path = Path("../data")/fname("cap_", *meta(crop_frame(frame), printing=True))
     except:
         path = Path("../data")/fname("fail_", datetime.now(), "nowhere")
+    path.parent.mkdir(parents=True, exist_ok=True)
     cv2.imwrite(path, frame)
     return path
