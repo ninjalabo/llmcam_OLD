@@ -10,7 +10,7 @@ __all__ = ['hdrs', 'app', 'scroll_script', 'ChatMessage', 'ChatInput', 'ActionBu
 import uvicorn
 import importlib.util
 from fasthtml.common import *
-from .fn_to_fc import generate_messages
+from .fn_to_fc import complete, YTLiveTools
 
 # %% ../nbs/05_chat_ui.ipynb 5
 # Set up the app, including daisyui and tailwind for the chat component
@@ -135,11 +135,8 @@ def send(msg: str, messages: list[str] = None, roles: list[str] = None):
     nof_old_msgs = len(history) # Number of old messages
     
     # Add the user's message to the chat history
-    messages = generate_messages(
-        message=msg, 
-        history=history
-    )
-    responses = messages[nof_old_msgs:]  # Get only the new messages
+    complete(history, "user", msg, YTLiveTools)
+    responses = history[nof_old_msgs:]  # Get only the new messages
     
     # Create chat messages from the responses
     chat_messages = [
