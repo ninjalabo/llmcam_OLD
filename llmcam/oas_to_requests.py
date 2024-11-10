@@ -189,7 +189,7 @@ def toolbox_schema(
         
     return toolbox
 
-# %% ../nbs/oas_to_requests.ipynb 16
+# %% ../nbs/oas_to_requests.ipynb 17
 def generate_request(
     function_name: str,  # The name of the function
     url: str,  # The URL of the request
