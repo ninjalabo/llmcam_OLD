@@ -69,13 +69,13 @@ $ pip install -e . ['dev']
 Start by importing our modules:
 
 ``` python
-from llmcam.ytlive import capture_youtube_live_frame
+from llmcam.ytlive import NHsta
 from llmcam.gpt4v import ask_gpt4v
 from llmcam.chat_ui import llmcam_chatbot
 ```
 
 ``` python
-fn = capture_youtube_live_frame()
+fn = NHsta()()
 fn
 ```
 
@@ -84,9 +84,10 @@ fn
     [youtube] LMZQ7eFhm58: Downloading ios player API JSON
     [youtube] LMZQ7eFhm58: Downloading web creator player API JSON
     [youtube] LMZQ7eFhm58: Downloading m3u8 information
-    30.10.2024 21:55:57 Tuomiokirkko
+    11.11.2024 17:50:38
+    cap_2024.11.11_17:58:09_unclear.jpg
 
-    PosixPath('../data/cap_2024.10.30_21:55:57_Tuomiokirkko.jpg')
+    Path('../data/cap_2024.11.11_17:58:09_unclear.jpg')
 
 ``` python
 ask_gpt4v(fn)

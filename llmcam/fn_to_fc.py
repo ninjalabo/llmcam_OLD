@@ -15,7 +15,7 @@ import inspect
 
 from typing import Optional, Union, Callable, Literal,  Tuple
 from types import NoneType
-from .ytlive import capture_youtube_live_frame
+from .ytlive import NHsta
 from .gpt4v import ask_gpt4v
 
 # %% ../nbs/06_fn_to_fc.ipynb 7
@@ -23,9 +23,10 @@ def capture_youtube_live_frame_and_save(
         link: Optional[str] = None,  # YouTube Live link
     ) -> str:  # Path to the saved image
     """Capture a jpeg file from YouTube Live and save in data directory"""
+    fx = NHsta()
     if link is not None:
-        return str(capture_youtube_live_frame(link))
-    return str(capture_youtube_live_frame())
+        return str(fx(link))
+    return str(fx())
 
 # %% ../nbs/06_fn_to_fc.ipynb 9
 def ask_gpt4v_about_image_file(

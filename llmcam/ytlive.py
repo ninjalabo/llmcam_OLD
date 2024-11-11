@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['nakyma_helsinki_known_places', 'nakyma_helsinkigista_youtube_live_url', 'ydl_opts', 'stream_url', 'show_frame',
-           'crop_frame', 'frame_to_text', 'known', 'meta', 'fname', 'capture_youtube_live_frame']
+           'crop_frame', 'frame_to_text', 'known', 'meta', 'fname', 'YTLive', 'NHsta']
 
 # %% ../nbs/01_ytlive.ipynb 3
 from datetime import datetime
@@ -91,20 +91,47 @@ def meta(frame, known_places=nakyma_helsinki_known_places, printing=False):
 # %% ../nbs/01_ytlive.ipynb 16
 def fname(prefix, dt, pl): return f"""{prefix}{dt.strftime("%Y.%m.%d_%H:%M:%S")}_{pl}.jpg"""
 
-# %% ../nbs/01_ytlive.ipynb 18
-def capture_youtube_live_frame(youtube_live_url:str=nakyma_helsinkigista_youtube_live_url):
-    "Capture a frame from the given YouTube Live URL and save into a JPEG file"
+# %% ../nbs/01_ytlive.ipynb 19
+class YTLive:
+    def __init__(self,
+                 url:str, # YouTube Live URL
+                 data_dir:Path = Path("../data/"), # directory to store captured images
+                 place:str="nowhere", # place name
+                ):
+        self.url = url
+        self.stream_url = stream_url(url, ydl_opts)
+        self.data_dir = data_dir
+        self.place = place
 
-    url = stream_url(youtube_live_url, ydl_opts)
-    cap = cv2.VideoCapture(url)
-    ret, frame = cap.read()
-    #show_frame(crop_frame(frame))
-    if ret==False:
-        raise Exception("Failed to capture frame.")
-    try:        
-        path = Path("../data")/fname("cap_", *meta(crop_frame(frame), printing=True))
-    except:
-        path = Path("../data")/fname("fail_", datetime.now(), "nowhere")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    cv2.imwrite(path, frame)
-    return path
+    def file_name(self, frame=None):
+        return fname("cap_", datetime.now(), self.place)
+
+    def capture(self) -> Path:
+        cap = cv2.VideoCapture(self.stream_url)
+        ret, frame = cap.read()
+        if ret==False:
+            raise Exception("Failed to capture frame.")
+        fn = self.data_dir/self.file_name(frame)
+        cv2.imwrite(fn, frame)
+        return fn     
+
+    def __call__(self):
+        # __call__ method allows the instance to be called like a function
+        return self.capture()
+
+# %% ../nbs/01_ytlive.ipynb 22
+class NHsta(YTLive):
+    def __init__(self,
+                 url:str="https://www.youtube.com/watch?v=LMZQ7eFhm58", # YouTube Live URL
+                 data_dir:Path = Path("../data/"), # directory to store captured images
+                 place:str="unclear", # place name if OCR doesn't work
+                ):
+        super().__init__(url, data_dir, place)
+    
+    def file_name(self, frame):
+        try:        
+            path = fname("cap_", *meta(crop_frame(frame), printing=True))
+        except Exception as e:
+            path = super().file_name()
+            print(path)
+        return path
