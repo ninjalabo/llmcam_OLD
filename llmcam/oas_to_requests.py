@@ -270,13 +270,23 @@ def toolbox_schema(
 # %% ../nbs/oas_to_requests.ipynb 25
 def generate_request(
     function_name: str,  # The name of the function
-    url: str,  # The URL of the request
-    method: str,  # The method of the request
+    tools: list = [],  # The toolbox schema
+    url: str = None,  # The URL of the request
+    method: str = None,  # The method of the request
     path: dict = {},  # The path parameters of the request
     query: dict = {},  # The query parameters of the request
-    body: dict = {}  # The body of the request
+    body: dict = {},  # The body of the request
+    **kwargs  # Additional parameters
 ) -> dict:  # The response of the request
     """Generate a request from the function name and parameters."""
+    # Extract the URL and method from the toolbox if not provided
+    if url is None or method is None:
+        for tool in tools:
+            if tool["function"]["name"] == function_name:
+                url = tool["function"]["parameters"]["properties"]["url"]["default"]
+                method = tool["function"]["parameters"]["properties"]["method"]["default"]
+                break
+
     # Prepare the request
     headers = {
         "Content-Type": "application/json"
@@ -285,9 +295,9 @@ def generate_request(
     # Execute the request
     response = requests.request(
         method,
-        url.format(**path),
+        url.format(**path, **kwargs),
         headers=headers,
-        params=query,
+        params={**query, **kwargs},
         json=body if len(body) > 0 else None
     )
 

@@ -144,16 +144,16 @@ YTLiveTools = [tool_schema(fn) for fn in (capture_youtube_live_frame_and_save, a
 # Support functions to handle tool response,where res == response.choices[0].message
 def fn_name(res): return res.tool_calls[0].function.name
 def fn_args(res): return json.loads(res.tool_calls[0].function.arguments)    
-def fn_exec(res, aux_fn):
+def fn_exec(res, aux_fn, tools = []):
     fn = globals().get(fn_name(res))
     if fn: return fn(**fn_args(res))
-    aux_fn(fn_name(res), **fn_args(res))
+    return aux_fn(fn_name(res), **fn_args(res), tools = tools)
     
-def fn_result_content(res, aux_fn):
+def fn_result_content(res, aux_fn, tools = []):
     """Create a content containing the result of the function call"""
     content = dict()
     content.update(fn_args(res))
-    content.update({fn_name(res): fn_exec(res, aux_fn)})
+    content.update({fn_name(res): fn_exec(res, aux_fn, tools)})
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 31
@@ -179,7 +179,7 @@ def complete(
         complete(
             messages, 
             role="tool", 
-            content=fn_result_content(res, aux_fn), 
+            content=fn_result_content(res, aux_fn, tools=tools), 
             tools=tools, 
             tool_call_id=res.tool_calls[0].id, 
             aux_fn=aux_fn
