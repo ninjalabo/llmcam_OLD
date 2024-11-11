@@ -101,7 +101,7 @@ def extract_refs(
 
     return flatten_refs
 
-# %% ../nbs/oas_to_requests.ipynb 14
+# %% ../nbs/oas_to_requests.ipynb 15
 # Directly transferable properties from OAS to GPT-compatible schema
 TRANSFERABLE_TYPES = [
     "type", "description", "default", "enum", "pattern", "additionalProperties",
@@ -176,7 +176,7 @@ def transform_property(
     return {k: v for k, v in new_prop.items() if v is not None}, required
 
 
-# %% ../nbs/oas_to_requests.ipynb 20
+# %% ../nbs/oas_to_requests.ipynb 21
 def toolbox_schema(
         base_url: str,  # The base URL of the API
         oas: dict,  # The OpenAPI schema
@@ -267,7 +267,7 @@ def toolbox_schema(
         
     return toolbox
 
-# %% ../nbs/oas_to_requests.ipynb 25
+# %% ../nbs/oas_to_requests.ipynb 26
 def generate_request(
     function_name: str,  # The name of the function
     tools: list = [],  # The toolbox schema
