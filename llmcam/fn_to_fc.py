@@ -141,33 +141,33 @@ def tool_schema(
 YTLiveTools = [tool_schema(fn) for fn in (capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file)]
 
 # %% ../nbs/06_fn_to_fc.ipynb 30
-# Support functions to handle tool response,where res == response.choices[0].message
-def fn_name(res): return res.tool_calls[0].function.name
-def fn_args(res): return json.loads(res.tool_calls[0].function.arguments)    
-def fn_exec(res, aux_fn, tools = []):
-    fn = globals().get(fn_name(res))
-    if fn: return fn(**fn_args(res))
-    return aux_fn(fn_name(res), **fn_args(res), tools = tools)
+# Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
+def fn_name(call): return call["function"]["name"]
+def fn_args(call): return json.loads(call["function"]["arguments"])    
+def fn_exec(call, aux_fn, tools = []):
+    fn = globals().get(fn_name(call))
+    if fn: return fn(**fn_args(call))
+    return aux_fn(fn_name(call), **fn_args(call), tools = tools)
     
-def fn_result_content(res, aux_fn, tools = []):
+def fn_result_content(call, aux_fn, tools = []):
     """Create a content containing the result of the function call"""
     content = dict()
-    content.update(fn_args(res))
-    content.update({fn_name(res): fn_exec(res, aux_fn, tools)})
+    content.update(fn_args(call))
+    content.update({fn_name(call): fn_exec(call, aux_fn, tools)})
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 31
 def complete(
         messages: list[dict],  # The list of messages
-        role: Literal["system", "user", "assistant", "tool"],  # The role of the message sender
-        content: str,  # The content of the message
-        tools: list[dict],  # The list of tools
-        tool_call_id: Optional[str] = None,  # The ID of the tool call
+        role: Literal["system", "user", "assistant", "tool"] = None,  # The role of the message sender
+        content: str = None,  # The content of the message
+        tools: list[dict] = [],  # The list of tools
         aux_fn: Optional[Callable] = None  # The auxiliary function to handle tool response
     ) -> Tuple[str, str]:  # The role and content of the last message
     """Complete the conversation with the given message"""
-    # Append the message to the list
-    messages.append({"role":role, "content":content, "tool_call_id":tool_call_id})
+    if role is not None and content is not None:
+        # Append the message to the list
+        messages.append({"role":role, "content":content})
 
     # Generate the response from GPT-4o
     response = openai.chat.completions.create(model="gpt-4o", messages=messages, tools=tools)
@@ -175,13 +175,21 @@ def complete(
     messages.append(res.to_dict())
 
     # Handle the tool response
+    for call in res.to_dict().get('tool_calls', []):
+        # Append the tool response to the list
+        messages.append(
+            {
+                "role": "tool",
+                "content": fn_result_content(call, aux_fn, tools=tools),
+                "tool_call_id": call["id"]
+            }
+        )
+    
     if res.to_dict().get('tool_calls'):
+        # Recursively call the complete function to handle the tool response
         complete(
             messages, 
-            role="tool", 
-            content=fn_result_content(res, aux_fn, tools=tools), 
             tools=tools, 
-            tool_call_id=res.tool_calls[0].id, 
             aux_fn=aux_fn
         )
 
