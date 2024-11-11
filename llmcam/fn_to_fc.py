@@ -150,7 +150,15 @@ def fn_exec(call, aux_fn, tools = []):
     fn = globals().get(fn_name(call))
     if fn: return fn(**fn_args(call))
     return aux_fn(fn_name(call), **fn_args(call), tools = tools)
+# Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
+def fn_name(call): return call["function"]["name"]
+def fn_args(call): return json.loads(call["function"]["arguments"])    
+def fn_exec(call, aux_fn, tools = []):
+    fn = globals().get(fn_name(call))
+    if fn: return fn(**fn_args(call))
+    return aux_fn(fn_name(call), **fn_args(call), tools = tools)
     
+def fn_result_content(call, aux_fn, tools = []):
 def fn_result_content(call, aux_fn, tools = []):
     """Create a content containing the result of the function call"""
     content = dict()
