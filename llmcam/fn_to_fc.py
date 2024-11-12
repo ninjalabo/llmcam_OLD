@@ -4,7 +4,8 @@
 
 # %% auto 0
 __all__ = ['YTLiveTools', 'capture_youtube_live_frame_and_save', 'ask_gpt4v_about_image_file', 'extract_parameter_comments',
-           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_exec', 'fn_result_content', 'complete']
+           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_exec', 'fn_result_content', 'form_msg',
+           'complete']
 
 # %% ../nbs/06_fn_to_fc.ipynb 3
 # Importing openai and our custom functions
@@ -157,19 +158,28 @@ def fn_result_content(call, aux_fn, tools = []):
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 31
+def form_msg(
+    role: Literal["system", "user", "assistant", "tool"],  # The role of the message sender
+    content: str,  # The content of the message
+    tool_call_id: Optional[str] = None,  # The ID of the tool call (if role == "tool")
+):
+    """Create a message for the conversation"""
+    msg = {
+        "role": role,
+        "content": content
+    }
+    if role == "tool":
+        msg["tool_call_id"] = tool_call_id
+    return msg
+
+# %% ../nbs/06_fn_to_fc.ipynb 32
 def complete(
         messages: list[dict],  # The list of messages
-        role: Literal["system", "user", "assistant", "tool"] = None,  # The role of the message sender
-        content: str = None,  # The content of the message
         tools: list[dict] = [],  # The list of tools
         aux_fn: Optional[Callable] = None  # The auxiliary function to handle tool response
     ) -> Tuple[str, str]:  # The role and content of the last message
     """Complete the conversation with the given message"""
-    if role is not None and content is not None:
-        # Append the message to the list
-        messages.append({"role":role, "content":content})
-
-    # Generate the response from GPT-4o
+    # Generate the response from GPT-4
     response = openai.chat.completions.create(model="gpt-4o", messages=messages, tools=tools)
     res = response.choices[0].message
     messages.append(res.to_dict())
@@ -178,11 +188,11 @@ def complete(
     for call in res.to_dict().get('tool_calls', []):
         # Append the tool response to the list
         messages.append(
-            {
-                "role": "tool",
-                "content": fn_result_content(call, aux_fn, tools=tools),
-                "tool_call_id": call["id"]
-            }
+            form_msg(
+                role="tool",
+                content=fn_result_content(call, aux_fn, tools=tools),
+                tool_call_id=call["id"]
+            )
         )
     
     if res.to_dict().get('tool_calls'):
