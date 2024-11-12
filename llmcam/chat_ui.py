@@ -10,7 +10,7 @@ __all__ = ['hdrs', 'app', 'scroll_script', 'ChatMessage', 'ChatInput', 'ActionBu
 import uvicorn
 import importlib.util
 from fasthtml.common import *
-from .fn_to_fc import complete, YTLiveTools
+from .fn_to_fc import complete, form_msg, YTLiveTools
 
 # %% ../nbs/05_chat_ui.ipynb 5
 # Set up the app, including daisyui and tailwind for the chat component
@@ -34,7 +34,7 @@ def ChatMessage(
                     msg,
                     cls=f"chat-bubble {bubble_class} marked px-6 py-4", 
                     style=f"background-color: {'#038a5e' if user else '#025238'}; color: {'black' if user else 'white'};"),
-                Hidden(msg, name="messages"),  # Hidden field for submitting past messages to form
+                Hidden(msg, name="contents"),  # Hidden field for submitting past contents to form
                 Hidden("user" if user else "assistant", name="roles")  # Hidden field for submitting corresponding owners
             )
 
@@ -125,18 +125,19 @@ def index():
 # %% ../nbs/05_chat_ui.ipynb 21
 # Handle the form submission
 @app.post('/')
-def send(msg: str, messages: list[str] = None, roles: list[str] = None):
-    # If no messages or roles are provided, set them to empty lists
-    if not messages: messages = []
+def send(msg: str, contents: list[str] = None, roles: list[str] = None):
+    # If no contents or roles are provided, set them to empty lists
+    if not contents: contents = []
     if not roles: roles = []
 
-    # Create a chat history from the provided messages and roles
-    history = [ {"role": role, "content": message} for role, message in zip(roles, messages) ]
-    nof_old_msgs = len(history) # Number of old messages
+    # Create chat messages from the provided contents and roles
+    messages = [ form_msg(role, content) for role, content in zip(roles, contents) ]
+    nof_old_msgs = len(messages) # Number of old messages
+    messages.append(form_msg("user", msg))
     
     # Add the user's message to the chat history
-    complete(history, "user", msg, YTLiveTools)
-    responses = history[nof_old_msgs:]  # Get only the new messages
+    complete(messages, YTLiveTools)
+    responses = messages[nof_old_msgs:]  # Get only the new messages
     
     # Create chat messages from the responses
     chat_messages = [
