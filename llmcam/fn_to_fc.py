@@ -105,12 +105,19 @@ def tool_schema(
     # Extract function name, docstring, and parameters
     func_name = func.__name__
     func_description = func.__doc__ or "No description provided."
+    func_module = func.__module__
     signature = inspect.signature(func)
     
     # Create parameters schema
     parameters_schema = {
         "type": "object",
-        "properties": {},
+        "properties": {
+            "module": {
+                "type": "string",
+                "description": "The module where the function is located.",
+                "default": func_module
+            }
+        },
         "required": []
     }
     
