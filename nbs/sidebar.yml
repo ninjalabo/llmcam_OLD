@@ -9,5 +9,6 @@ website:
       - 05_chat_ui.ipynb
       - 06_fn_to_fc.ipynb
       - 08_oas_to_fc.ipynb
+      - 10_store.ipynb
       - oas_to_fc.ipynb
       - oas_to_requests.ipynb

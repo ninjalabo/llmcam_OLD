@@ -105,12 +105,19 @@ def tool_schema(
     # Extract function name, docstring, and parameters
     func_name = func.__name__
     func_description = func.__doc__ or "No description provided."
+    func_module = func.__module__
     signature = inspect.signature(func)
     
     # Create parameters schema
     parameters_schema = {
         "type": "object",
-        "properties": {},
+        "properties": {
+            "module": {
+                "type": "string",
+                "description": "The module where the function is located.",
+                "default": func_module
+            }
+        },
         "required": []
     }
     
@@ -148,7 +155,11 @@ YTLiveTools = [tool_schema(fn) for fn in (capture_youtube_live_frame_and_save, a
 # %% ../nbs/06_fn_to_fc.ipynb 30
 # Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
 def fn_name(call): return call["function"]["name"]
-def fn_args(call): return json.loads(call["function"]["arguments"])    
+def fn_args(call): 
+    args = json.loads(call["function"]["arguments"])  # Parse the JSON arguments
+    args.pop("module", None)  # Remove the "module" field if it exists
+    return args    
+
 def fn_exec(call, aux_fn, tools = []):
     fn = globals().get(fn_name(call))
     if fn: return fn(**fn_args(call))
