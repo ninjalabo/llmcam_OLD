@@ -4,8 +4,8 @@
 
 # %% auto 0
 __all__ = ['YTLiveTools', 'capture_youtube_live_frame_and_save', 'ask_gpt4v_about_image_file', 'extract_parameter_comments',
-           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_exec', 'fn_result_content', 'form_msg',
-           'complete']
+           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_exec', 'fn_result_content', 'print_msg',
+           'print_msgs', 'form_msg', 'form_msgs', 'complete']
 
 # %% ../nbs/06_fn_to_fc.ipynb 3
 # Importing openai and our custom functions
@@ -18,6 +18,9 @@ from typing import Optional, Union, Callable, Literal,  Tuple
 from types import NoneType
 from .ytlive import YTLive, NHsta
 from .gpt4v import ask_gpt4v
+
+import textwrap
+from colorama import Fore, Back, Style
 
 # %% ../nbs/06_fn_to_fc.ipynb 7
 def capture_youtube_live_frame_and_save(
@@ -173,6 +176,22 @@ def fn_result_content(call, aux_fn, tools = []):
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 31
+def print_msg(msg):
+    who = msg['role'].capitalize()
+    who = (Fore.RED if who in "System" else Fore.GREEN if who in "User" else Fore.BLUE if who in "Assistant" else Fore.CYAN) + who
+    who = Back.YELLOW + who
+    print(Style.BRIGHT + Fore.RED + f">> {who}:" + Style.RESET_ALL)
+    try:
+        print(textwrap.fill(msg["content"], 100))
+    except:
+        print(msg)
+
+def print_msgs(msgs, skip_tools=True):
+    for msg in msgs:
+        if skip_tools and 'tool_calls' in msg.keys() or 'tool_call_id' in msg.keys():
+            continue
+        print_msg(msg)
+
 def form_msg(
     role: Literal["system", "user", "assistant", "tool"],  # The role of the message sender
     content: str,  # The content of the message
@@ -186,6 +205,8 @@ def form_msg(
     if role == "tool":
         msg["tool_call_id"] = tool_call_id
     return msg
+
+def form_msgs(msgs): return [{"role":m[0],"content":m[1]} for m in msgs]        
 
 # %% ../nbs/06_fn_to_fc.ipynb 32
 def complete(

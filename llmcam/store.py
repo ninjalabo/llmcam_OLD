@@ -61,7 +61,7 @@ marine_digitraffic = load_oas(
     overwrite=False
 )
 
-# %% ../nbs/10_store.ipynb 14
+# %% ../nbs/10_store.ipynb 15
 def add_api_tools(
     service_name: str,  # Name of the API service
     base_url: str,  # Base URL of the API service
@@ -80,12 +80,12 @@ def add_api_tools(
     global ToolBox
     ToolBox[service_name] = toolbox_schema(base_url, oas)
 
-# %% ../nbs/10_store.ipynb 18
+# %% ../nbs/10_store.ipynb 19
 from importlib import import_module
 from typing import Callable, Any
 from .fn_to_fc import tool_schema
 
-# %% ../nbs/10_store.ipynb 23
+# %% ../nbs/10_store.ipynb 25
 def execute_function(
     function_name: str,  # Name of the function
     tools: list = [],  # The toolbox schema
@@ -110,7 +110,7 @@ def execute_function(
         raise ValueError("Function not found")
     return func(**kwargs)
 
-# %% ../nbs/10_store.ipynb 27
+# %% ../nbs/10_store.ipynb 29
 def add_function_tools(
     service_name: str,  # Name of the service
     function_names: list[str],  # List of function names (with module prefix)
@@ -149,7 +149,7 @@ def add_function_tools(
     for function_name in function_names:
         ToolBox[service_name] = tools
 
-# %% ../nbs/10_store.ipynb 30
+# %% ../nbs/10_store.ipynb 32
 def remove_service(service_name: str):
     """Remove service from toolbox."""
     global ToolBox
@@ -162,7 +162,7 @@ def clean_toolbox():
     global ToolBox
     ToolBox = {}
 
-# %% ../nbs/10_store.ipynb 31
+# %% ../nbs/10_store.ipynb 33
 def save_toolbox(destination: str = "toolbox.json"):
     """Save toolbox to file."""
     with open(destination, "w") as f:
@@ -175,7 +175,7 @@ def load_toolbox(destination: str = "toolbox.json"):
     with open(destination, "r") as f:
         ToolBox = json.load(f)
 
-# %% ../nbs/10_store.ipynb 32
+# %% ../nbs/10_store.ipynb 34
 def extract_tools_from_services(
     services: list[str] = []  # List of service names
 ) -> list:  # List of tools
@@ -200,7 +200,7 @@ def extract_tools_from_services(
     # Return tools
     return tools
 
-# %% ../nbs/10_store.ipynb 35
+# %% ../nbs/10_store.ipynb 37
 add_api_tools(
     service_name="road_digitraffic",
     base_url="https://tie.digitraffic.fi",
@@ -208,7 +208,7 @@ add_api_tools(
     oas_destination="api/road_digitraffic.json"
 )
 
-# %% ../nbs/10_store.ipynb 36
+# %% ../nbs/10_store.ipynb 38
 add_api_tools(
     service_name="train_digitraffic",
     base_url="https://rata.digitraffic.fi",
@@ -216,7 +216,7 @@ add_api_tools(
     oas_destination="api/train_digitraffic.json"
 )
 
-# %% ../nbs/10_store.ipynb 38
+# %% ../nbs/10_store.ipynb 40
 add_function_tools(
     service_name="ytube_live",
     function_names=[
@@ -225,7 +225,7 @@ add_function_tools(
     ]
 )
 
-# %% ../nbs/10_store.ipynb 40
+# %% ../nbs/10_store.ipynb 42
 from .oas_to_requests import generate_request
 
 def redirect_tool_calls(
