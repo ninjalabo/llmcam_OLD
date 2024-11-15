@@ -10,6 +10,7 @@ import json
 import yaml
 import copy
 import re
+from typing import Callable
 
 # %% ../nbs/oas_to_requests.ipynb 8
 def extract_refs(
@@ -180,6 +181,7 @@ def transform_property(
 def toolbox_schema(
         base_url: str,  # The base URL of the API
         oas: dict,  # The OpenAPI schema
+        fixup:Callable=None, # a fixup function to execute a REST API when a function name isn't found.
     ) -> dict:  # The toolbox schema
     """Form the toolbox schema from the OpenAPI schema."""
     
@@ -256,6 +258,7 @@ def toolbox_schema(
                 "description": description,
                 "parameters": parameters
             }
+            if fixup: function['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
 
             # Add the function to the toolbox
             toolbox.append(
