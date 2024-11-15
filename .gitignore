@@ -151,3 +151,9 @@ checklink/cookies.txt
 
 # Quarto
 .quarto
+
+# Model path
+*.pt
+
+# OAS when test
+nbs/*.json
