@@ -13,6 +13,7 @@ import openai
 import json
 import ast
 import inspect
+import importlib
 
 from typing import Optional, Union, Callable, Literal,  Tuple
 from types import NoneType
@@ -164,9 +165,9 @@ def fn_args(call):
     return args    
 
 def fn_exec(call, aux_fn, tools = []):
-    fn = globals().get(fn_name(call))
-    if fn: return fn(**fn_args(call))
-    return aux_fn(fn_name(call), **fn_args(call), tools = tools)
+    m = importlib.import_module(tools[0]['function']['parameters']['properties']['module']['default'])
+    fn = getattr(m, fn_name(call))
+    return fn(**fn_args(call))
     
 def fn_result_content(call, aux_fn, tools = []):
     """Create a content containing the result of the function call"""
