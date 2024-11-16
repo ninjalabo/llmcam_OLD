@@ -3,7 +3,11 @@
 # %% auto 0
 __all__ = ['detect_objects']
 
-# %% ../nbs/07_yolo_to_fc.ipynb 2
+# %% ../nbs/07_yolo_to_fc.ipynb 1
+import torch
+import json
+
+# %% ../nbs/07_yolo_to_fc.ipynb 3
 def detect_objects(
         image_path: str, # Path/URL of image
         conf: float=0.05 # Confidence threshold

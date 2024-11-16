@@ -13,6 +13,8 @@ import openai
 import json
 import ast
 import inspect
+import importlib
+import warnings
 
 from typing import Optional, Union, Callable, Literal,  Tuple
 from types import NoneType
@@ -158,17 +160,31 @@ YTLiveTools = [tool_schema(fn) for fn in (capture_youtube_live_frame_and_save, a
 # %% ../nbs/06_fn_to_fc.ipynb 30
 # Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
 def fn_name(call): return call["function"]["name"]
-def fn_args(call): 
+def fn_args(call):
     args = json.loads(call["function"]["arguments"])  # Parse the JSON arguments
     args.pop("module", None)  # Remove the "module" field if it exists
-    return args    
+    return args
 
-def fn_exec(call, aux_fn, tools = []):
-    fn = globals().get(fn_name(call))
-    if fn: return fn(**fn_args(call))
+def fn_exec(call, aux_fn=None, tools=[]):
+    if aux_fn: warnings.warn(f"`aux_fn` is deprecated!")
+    for tool in tools:
+        if call['function']['name'] != tool['function']['name']:
+            continue
+        try:
+            module_path = tool['function']['parameters']['properties']['module']['default']
+            module = importlib.import_module(module_path)
+            fn = getattr(module, fn_name(call))
+            return fn(**fn_args(call))
+        except Exception as e:
+            if not 'fixup' in tool['function']:
+                continue
+            module_path, fn_path = tool['function']['fixup'].rsplit('.', 1)
+            fn = getattr(importlib.import_module(module_path), fn_path)
+            return fn(fn_name(call), **fn_args(call), tools=tools) # FIXME: do without 'tools'
+
     return aux_fn(fn_name(call), **fn_args(call), tools = tools)
-    
-def fn_result_content(call, aux_fn, tools = []):
+
+def fn_result_content(call, aux_fn=None, tools=[]):
     """Create a content containing the result of the function call"""
     content = dict()
     content.update(fn_args(call))
@@ -230,7 +246,7 @@ def complete(
                 tool_call_id=call["id"]
             )
         )
-    
+
     if res.to_dict().get('tool_calls'):
         # Recursively call the complete function to handle the tool response
         complete(

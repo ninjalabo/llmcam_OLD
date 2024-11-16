@@ -78,7 +78,7 @@ def add_api_tools(
 
     # Create tool schema and append to toolbox
     global ToolBox
-    ToolBox[service_name] = toolbox_schema(base_url, oas)
+    ToolBox[service_name] = toolbox_schema(base_url, oas, fixup=generate_request)
 
 # %% ../nbs/10_store.ipynb 19
 from importlib import import_module
