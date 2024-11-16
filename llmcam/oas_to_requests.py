@@ -270,7 +270,7 @@ def toolbox_schema(
         
     return toolbox
 
-# %% ../nbs/04_oas_to_requests.ipynb 26
+# %% ../nbs/04_oas_to_requests.ipynb 27
 def generate_request(
     function_name: str,  # The name of the function
     tools: list = [],  # The toolbox schema
