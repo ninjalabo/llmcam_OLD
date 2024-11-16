@@ -176,6 +176,8 @@ def fn_exec(call, aux_fn=None, tools=[]):
             fn = getattr(module, fn_name(call))
             return fn(**fn_args(call))
         except Exception as e:
+            if not 'fixup' in tool['function']:
+                continue
             module_path, fn_path = tool['function']['fixup'].rsplit('.', 1)
             fn = getattr(importlib.import_module(module_path), fn_path)
             return fn(fn_name(call), **fn_args(call), tools=tools) # FIXME: do without 'tools'
