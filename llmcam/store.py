@@ -61,6 +61,10 @@ marine_digitraffic = load_oas(
     overwrite=False
 )
 
+# %% ../nbs/10_store.ipynb 11
+from .fn_to_fc import complete, form_msgs, print_msgs
+from .oas_to_requests import generate_request
+
 # %% ../nbs/10_store.ipynb 15
 def add_api_tools(
     service_name: str,  # Name of the API service
