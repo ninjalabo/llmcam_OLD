@@ -4,8 +4,8 @@
 
 # %% auto 0
 __all__ = ['YTLiveTools', 'capture_youtube_live_frame_and_save', 'ask_gpt4v_about_image_file', 'extract_parameter_comments',
-           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_exec', 'fn_result_content', 'print_msg',
-           'print_msgs', 'form_msg', 'form_msgs', 'complete']
+           'param_converter', 'tool_schema', 'fn_name', 'fn_args', 'fn_metadata', 'fn_exec', 'fn_result_content',
+           'print_msg', 'print_msgs', 'form_msg', 'form_msgs', 'complete']
 
 # %% ../nbs/06_fn_to_fc.ipynb 3
 # Importing openai and our custom functions
@@ -104,7 +104,8 @@ def param_converter(
 
 # %% ../nbs/06_fn_to_fc.ipynb 24
 def tool_schema(
-        func: Callable  # The function to generate the schema for
+        func: Callable,  # The function to generate the schema for
+        service_name: Optional[str] = None,  # The name of the service
     ) -> dict:  # The generated tool schema
     """Automatically generate a schema from its parameters and docstring"""
     # Extract function name, docstring, and parameters
@@ -116,13 +117,7 @@ def tool_schema(
     # Create parameters schema
     parameters_schema = {
         "type": "object",
-        "properties": {
-            "module": {
-                "type": "string",
-                "description": "The module where the function is located.",
-                "default": func_module
-            }
-        },
+        "properties": {},
         "required": []
     }
     
@@ -148,6 +143,10 @@ def tool_schema(
             "name": func_name,
             "description": func_description,
             "parameters": parameters_schema,
+            "metadata": {
+                "module": func_module,
+                "service": service_name or func_module
+            }
         }
     }
     
@@ -160,35 +159,36 @@ YTLiveTools = [tool_schema(fn) for fn in (capture_youtube_live_frame_and_save, a
 # %% ../nbs/06_fn_to_fc.ipynb 30
 # Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
 def fn_name(call): return call["function"]["name"]
-def fn_args(call):
-    args = json.loads(call["function"]["arguments"])  # Parse the JSON arguments
-    args.pop("module", None)  # Remove the "module" field if it exists
-    return args
+def fn_args(call): return json.loads(call["function"]["arguments"])
+def fn_metadata(tool): return tool["function"]["metadata"]
 
-def fn_exec(call, aux_fn=None, tools=[]):
-    if aux_fn: warnings.warn(f"`aux_fn` is deprecated!")
+def fn_exec(call, tools=[]):
+    """Execute the function call"""
     for tool in tools:
+        # Check if the function name matches
         if call['function']['name'] != tool['function']['name']:
             continue
+
+        # Execute the function by dynamically importing the module
         try:
-            module_path = tool['function']['parameters']['properties']['module']['default']
+            module_path = tool['function']['metadata']['module']
             module = importlib.import_module(module_path)
             fn = getattr(module, fn_name(call))
             return fn(**fn_args(call))
+        
+        # If the function is not found, try to fix it
         except Exception as e:
             if not 'fixup' in tool['function']:
                 continue
             module_path, fn_path = tool['function']['fixup'].rsplit('.', 1)
             fn = getattr(importlib.import_module(module_path), fn_path)
-            return fn(fn_name(call), **fn_args(call), tools=tools) # FIXME: do without 'tools'
+            return fn(fn_name(call), **fn_metadata(tool), **fn_args(call))
 
-    return aux_fn(fn_name(call), **fn_args(call), tools = tools)
-
-def fn_result_content(call, aux_fn=None, tools=[]):
+def fn_result_content(call, tools=[]):
     """Create a content containing the result of the function call"""
     content = dict()
     content.update(fn_args(call))
-    content.update({fn_name(call): fn_exec(call, aux_fn, tools)})
+    content.update({fn_name(call): fn_exec(call, tools)})
     return json.dumps(content)
 
 # %% ../nbs/06_fn_to_fc.ipynb 31
@@ -228,7 +228,6 @@ def form_msgs(msgs): return [{"role":m[0],"content":m[1]} for m in msgs]
 def complete(
         messages: list[dict],  # The list of messages
         tools: list[dict] = [],  # The list of tools
-        aux_fn: Optional[Callable] = None  # The auxiliary function to handle tool response
     ) -> Tuple[str, str]:  # The role and content of the last message
     """Complete the conversation with the given message"""
     # Generate the response from GPT-4
@@ -242,7 +241,7 @@ def complete(
         messages.append(
             form_msg(
                 role="tool",
-                content=fn_result_content(call, aux_fn, tools=tools),
+                content=fn_result_content(call, tools=tools),
                 tool_call_id=call["id"]
             )
         )
@@ -251,8 +250,7 @@ def complete(
         # Recursively call the complete function to handle the tool response
         complete(
             messages, 
-            tools=tools, 
-            aux_fn=aux_fn
+            tools=tools
         )
 
     # Return the last message
