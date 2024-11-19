@@ -10,7 +10,7 @@ import json
 import yaml
 import copy
 import re
-from typing import Callable
+from typing import Callable, Optional
 
 # %% ../nbs/04_oas_to_requests.ipynb 8
 def extract_refs(
@@ -221,6 +221,7 @@ def generate_request(
 def toolbox_schema(
         base_url: str,  # The base URL of the API
         oas: dict,  # The OpenAPI schema
+        service_name: Optional[str]=None,  # The name of the service
         fixup:Callable=None, # a fixup function to execute a REST API when a function name isn't found.
     ) -> dict:  # The toolbox schema
     """Form the toolbox schema from the OpenAPI schema."""
@@ -298,10 +299,11 @@ def toolbox_schema(
                 "metadata": {
                     "url": base_url + path,
                     "method": method,
-                    "accepted_queries": accepted_queries
+                    "accepted_queries": accepted_queries,
                 }
             }
             if fixup: function['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
+            if service_name: function["metadata"]["service"] = service_name
 
             # Add the function to the toolbox
             toolbox.append(
