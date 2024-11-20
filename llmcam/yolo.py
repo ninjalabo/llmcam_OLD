@@ -10,7 +10,7 @@ import json
 # %% ../nbs/07_yolo_to_fc.ipynb 3
 def detect_objects(
         image_path: str, # Path/URL of image
-        conf: float=0.05 # Confidence threshold
+        conf: float=0.25 # Confidence threshold
     ) -> str: # JSON format of detection results
     """Run YOLO object detection on an input image."""
     model = torch.hub.load("ultralytics/yolov5", "yolov5s")
@@ -18,5 +18,4 @@ def detect_objects(
     
     results = model(image_path)
     count = results.pandas().xyxy[0]['name'].value_counts().to_dict()
-    print(count)
-    return json.dumps(count, indent=2)
+    return json.dumps(count)
