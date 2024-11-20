@@ -8,7 +8,6 @@ __all__ = ['YTLiveTools', 'session_tools', 'hdrs', 'app', 'scroll_script', 'exec
 
 # %% ../nbs/05_chat_ui.ipynb 4
 import uvicorn
-import importlib.util
 from fasthtml.common import *
 from .fn_to_fc import capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file
 from .fn_to_fc import tool_schema, complete, form_msg
@@ -136,7 +135,10 @@ def index():
 # Handle the form submission
 @app.post('/')
 def send(session, msg: str, contents: list[str] = None, roles: list[str] = None):
-    if "session_id" not in session:
+    global session_tools
+    global execute_handler
+    
+    if "session_id" not in session or session["session_id"] not in session_tools:
         # Initialize tools in session tools and create a session ID
         session_id, tools = initialize_handlers(
             session_tools=session_tools,
@@ -175,24 +177,19 @@ def send(session, msg: str, contents: list[str] = None, roles: list[str] = None)
 
 # %% ../nbs/05_chat_ui.ipynb 24
 def llmcam_chatbot(
-        package_name="ninjalabo.llmcam",  # The installed package name
-        module_name="chat_ui",  # The module containing the FastAPI app
-        app_variable="app",  # The FastAPI app variable name
         host="0.0.0.0",  # The host to listen on
         port=5001,  # The port to listen on
-        **uvicorn_kwargs  # Additional keyword arguments for uvicorn
     ):
-    "Find and run the FastAPI app in the specified module within the given package."
-    # Construct the full module path (e.g., 'llmcam.chat_ui')
-    full_module_path = f"{package_name.split('.')[-1]}.{module_name}"
+    # Import app from chat_ui base module
+    from llmcam.chat_ui import app
 
-    # Check if the module exists in the installed package
-    try:
-        spec = importlib.util.find_spec(full_module_path)
-        if spec is None:
-            print(f"Module '{full_module_path}' not found in package '{package_name}'.")
-            return
-        # Dynamically run the Uvicorn server
-        uvicorn.run(f"{full_module_path}:{app_variable}", host=host, port=port, **uvicorn_kwargs)
-    except Exception as e:
-        print(f"Error running the app: {e}")
+    # Initialize session tools and execute handler
+    session_tools = {}
+    globals()["session_tools"] = session_tools
+
+    def execute_handler(function_name, **kwargs):
+        return execute_handler_core(session_tools, function_name, **kwargs)
+    globals()["execute_handler"] = execute_handler
+    
+    # Run application with uvicorn
+    uvicorn.run(app, host=host, port=port, log_level="info")
