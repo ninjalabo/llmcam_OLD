@@ -41,7 +41,7 @@ def load_oas(
         else:
             raise ValueError("Invalid file format")
 
-# %% ../nbs/10_store.ipynb 14
+# %% ../nbs/10_store.ipynb 13
 def add_api_tools(
     tools: list,  # List of existing tools
     service_name: str,  # Name of the API service
@@ -61,11 +61,12 @@ def add_api_tools(
     schema = toolbox_schema(base_url, oas, service_name=service_name, fixup=generate_request)
     tools.extend(schema)
 
-# %% ../nbs/10_store.ipynb 21
+# %% ../nbs/10_store.ipynb 20
 from importlib import import_module
 from typing import Callable, Any
+from .fn_to_fc import tool_schema
 
-# %% ../nbs/10_store.ipynb 23
+# %% ../nbs/10_store.ipynb 22
 def add_function_tools(
     tools: list,  # List of existing tools
     service_name: str,  # Name of the service
@@ -97,7 +98,7 @@ def add_function_tools(
         # Create tool schema and append to toolbox
         tools.append(tool_schema(func=func, service_name=service_name))
 
-# %% ../nbs/10_store.ipynb 29
+# %% ../nbs/10_store.ipynb 28
 # Additional functions
 def remove_tools(
     tools: list,  # List of existing tools
@@ -107,12 +108,12 @@ def remove_tools(
     tools[:] = [tool for tool in tools if ("service" not in tool["function"]["metadata"] or \
                                        tool["function"]["metadata"]["service"] != service_name)]
 
-# %% ../nbs/10_store.ipynb 30
+# %% ../nbs/10_store.ipynb 29
 import uuid
 import importlib
 from copy import deepcopy
 
-# %% ../nbs/10_store.ipynb 31
+# %% ../nbs/10_store.ipynb 30
 def execute_handler_core(
     tools: list, # Tools for each session
     function_name: str,  # Name of the function to execute
@@ -132,7 +133,7 @@ def execute_handler_core(
     # Execute the function
     function(tools, **kwargs)
 
-# %% ../nbs/10_store.ipynb 32
+# %% ../nbs/10_store.ipynb 31
 def handler_schema(
     function: Callable,  # Handler function
     service_name: str = "toolbox_handler",  # Name of the service
@@ -151,7 +152,7 @@ def handler_schema(
     
     return schema
 
-# %% ../nbs/10_store.ipynb 33
+# %% ../nbs/10_store.ipynb 32
 def initialize_handlers(
     functions: list[Callable],  # List of functions to initialize
     service_name: str = "toolbox_handler",  # Name of the service
@@ -178,7 +179,7 @@ def initialize_handlers(
 
     return session_id, tools
 
-# %% ../nbs/10_store.ipynb 34
+# %% ../nbs/10_store.ipynb 33
 def setup_fixup(
     fixup_core: Callable,  # Core fixup function
     fixup_name: str,  # Name of the fixup function
