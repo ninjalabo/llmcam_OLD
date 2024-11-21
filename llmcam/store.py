@@ -156,13 +156,15 @@ def initialize_handlers(
     functions: list[Callable],  # List of functions to initialize
     service_name: str = "toolbox_handler",  # Name of the service
     fixup: Optional[Callable] = None,  # Function to fixup function execution
-    tools: Optional[list] = [],  # List of tools to attach to
+    tools: Optional[list] = None,  # List of tools to attach to
     with_session: bool = False,  # Whether to use sessions
     session_tools: Optional[dict] = None, # Tools for each session
 ):
     """Initialize handlers"""
     # Initialize the handler schema
     session_id = str(uuid.uuid4()) if with_session else None
+    if with_session:
+        tools = []
     tools.extend([ handler_schema(
         function=function, 
         service_name=service_name, 
@@ -193,7 +195,6 @@ def setup_fixup(
         def fixup(function_name, session_id, **kwargs):
             # Get the tools for the session
             tools = session_tools[session_id]
-
             # Execute the fixup function
             fixup_core(tools, function_name, **kwargs)
         
