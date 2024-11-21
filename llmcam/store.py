@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['load_oas', 'add_api_tools', 'add_function_tools', 'remove_tools', 'execute_handler_core', 'handler_schema',
-           'initialize_handlers']
+           'initialize_handlers', 'setup_fixup']
 
 # %% ../nbs/10_store.ipynb 3
 import requests
@@ -114,19 +114,12 @@ from copy import deepcopy
 
 # %% ../nbs/10_store.ipynb 31
 def execute_handler_core(
-    session_tools: dict, # Tools for each session
+    tools: list, # Tools for each session
     function_name: str,  # Name of the function to execute
     module: str,  # Module of the function
-    session_id: str,  # Session ID
     **kwargs  # Keyword arguments
 ):
     """Execute the handler function by retrieving function with session ID."""
-
-    # Get the toolbox for the session
-    tools = session_tools.get(session_id, None)
-    if tools is None:
-        raise ValueError(f"Session tools not found: {session_id}")
-    
     # Get the function
     module = importlib.import_module(module)
     function = getattr(module, function_name, None)
@@ -142,14 +135,14 @@ def execute_handler_core(
 # %% ../nbs/10_store.ipynb 32
 def handler_schema(
     function: Callable,  # Handler function
-    session_id: str,  # Session ID
     service_name: str = "toolbox_handler",  # Name of the service
+    session_id: Optional[str] = None,  # Session ID
     fixup: Optional[Callable] = None  # Function to fixup function execution
 ):
     """Create a schema for handlers."""
-    schema = tool_schema(function, )
-    schema["function"]["metadata"]["session_id"] = session_id
+    schema = tool_schema(function, service_name=service_name)
     schema["function"]["metadata"]["service"] = service_name
+    if session_id: schema["function"]["metadata"]["session_id"] = session_id
     if fixup: schema["function"]['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
 
     if "tools" in schema["function"]["parameters"]["properties"]:
@@ -160,17 +153,60 @@ def handler_schema(
 
 # %% ../nbs/10_store.ipynb 33
 def initialize_handlers(
-        session_tools: dict, # Tools for each session
-        functions: list[Callable],  # List of functions to initialize
-        service_name: str = "toolbox_handler",  # Name of the service
-        fixup: Optional[Callable] = None,  # Function to fixup function execution
-    ):
+    functions: list[Callable],  # List of functions to initialize
+    service_name: str = "toolbox_handler",  # Name of the service
+    fixup: Optional[Callable] = None,  # Function to fixup function execution
+    tools: Optional[list] = [],  # List of tools to attach to
+    with_session: bool = False,  # Whether to use sessions
+    session_tools: Optional[dict] = None, # Tools for each session
+):
     """Initialize handlers"""
     # Initialize the handler schema
-    session_id = str(uuid.uuid4())
-    tools = [ handler_schema(function, session_id, service_name, fixup) for function in functions ]
+    session_id = str(uuid.uuid4()) if with_session else None
+    tools.extend([ handler_schema(
+        function=function, 
+        service_name=service_name, 
+        session_id=session_id,
+        fixup=fixup
+        ) for function in functions ])
 
-    # Add the tools to the holder
-    session_tools[session_id] = tools
+    # Attach tools to session
+    if with_session and session_tools is not None:
+        session_tools[session_id] = tools
 
     return session_id, tools
+
+# %% ../nbs/10_store.ipynb 34
+def setup_fixup(
+    fixup_core: Callable,  # Core fixup function
+    fixup_name: str,  # Name of the fixup function
+    tools: Optional[list] = None,  # List of tools to attach to
+    with_session: bool = False,  # Whether to use sessions
+    session_tools: Optional[dict] = None, # Tools for each session
+):
+    """Setup fixup"""
+    if with_session:
+        if session_tools is None:
+            raise ValueError("Session tools must be provided when using sessions")
+
+        # Initialize the fixup function definition
+        def fixup(function_name, session_id, **kwargs):
+            # Get the tools for the session
+            tools = session_tools[session_id]
+
+            # Execute the fixup function
+            fixup_core(tools, function_name, **kwargs)
+        
+        globals()[fixup_name] = fixup
+        fixup.__name__ = fixup_name
+        return fixup
+    
+    if tools is None:
+        raise ValueError("Tools must be provided when not using sessions")
+    def fixup(function_name, **kwargs):
+        # Attach the tools to the fixup core
+        fixup_core(tools, function_name, **kwargs)
+
+    globals()[fixup_name] = fixup
+    fixup.__name__ = fixup_name
+    return fixup
