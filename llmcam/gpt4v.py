@@ -24,19 +24,26 @@ question = """
     Describe this image quantitatively as many as possible in json format. All the value should numbers.
     
     ##### EXAMPLE OUTPUT FORMAT
-    
-    {'timestamp': '2024-10-06T19:04:14',
-     'location': 'Kauppatori',
-     'dimensions': {'width': 1280, 'height': 720},
-     'buildings': {'number_of_buildings': 10,
-      'building_height_range': '3-5 stories'},
-     'vehicles': {'number_of_vehicles': 5, 'types': ['cars', 'trucks'], number_of_available_parking_space: 3},
-     'waterbodies': {'visible': True, 'type': 'harbor', 'number_of_boats': 4},
-     'street_lights': {'number_of_street_lights': 20},
-     'people': {'approximate_number': 10},
-     'lighting': {'time_of_day': 'evening', 'artificial_lighting': 'prominent'},
-     'visibility': {'clear': True},
-     'sky': {'visible': True, 'light_conditions': 'dusk'}}
+    {
+        'timestamp': '2024-10-06T19:04:14',
+        'location': 'Kauppatori',
+        'dimensions': '1280 x 720',
+        'building': 10,
+        'buildings_height_range': '3-5 stories',
+        'car': 5,
+        'truck': 2,
+        'boat': 4,
+        'available_parking_space': 3,
+        'street_lights': 20,
+        'person': 10,
+        'time_of_day': 'evening',
+        'artificial_lighting': 'prominent',
+        'visibility_clear': True,
+        'sky_visible': True,
+        'sky_light_conditions': 'dusk',
+        'waterbodies_visible': True,
+        'waterbodies_type': 'harbor'
+    }
     """
 
 # %% ../nbs/02_gpt4v.ipynb 11

@@ -90,6 +90,14 @@ def param_converter(
     elif param_type == NoneType:
         return { "type": "null", "description": "A default value will be automatically used." }
     
+    if param_type == list or getattr(param_type, "__origin__", None) == list:
+        item_type = param_type.__args__[0] if hasattr(param_type, "__args__") and param_type.__args__ else str
+        return {
+            "type": "array",
+            "description": description,
+            "items": { "type": param_converter(item_type, description)["type"] }
+        }
+    
     if hasattr(param_type, '__origin__') and param_type.__origin__ == Union:
         # Recursively convert the types
         descriptions = description.split(" or ")

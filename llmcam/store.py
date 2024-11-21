@@ -12,7 +12,8 @@ import yaml
 import json
 import os
 
-from .oas_to_requests import toolbox_schema, generate_request
+from .oas_to_requests import *
+from .fn_to_fc import *
 from typing import Optional
 
 # %% ../nbs/10_store.ipynb 5
@@ -63,7 +64,6 @@ def add_api_tools(
 # %% ../nbs/10_store.ipynb 21
 from importlib import import_module
 from typing import Callable, Any
-from .fn_to_fc import tool_schema
 
 # %% ../nbs/10_store.ipynb 23
 def add_function_tools(
