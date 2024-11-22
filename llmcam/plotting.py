@@ -7,9 +7,8 @@ __all__ = ['plot_object']
 
 # %% ../nbs/14_plotting.ipynb 3
 from .file_manager import list_image_files
-from .gpt4v import ask_gpt4v
 from .yolo import detect_objects
-from .fn_to_fc import tool_schema, complete, form_msgs, print_msgs
+from .fn_to_fc import tool_schema, complete, form_msgs, print_msgs, ask_gpt4v_about_image_file
 import os
 import json
 import matplotlib.pyplot as plt
@@ -21,7 +20,7 @@ def plot_object(
         path: str = "object_count_bar_plot.png", # path to save plot
         yolo: bool = False # whether to use YOLO or GPT only
         ):
-  """Plot the number of object specified through multiple images, accept singular form for object only."""
+  """Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form."""
   count = []
   if yolo:
     for image in images:
@@ -31,7 +30,7 @@ def plot_object(
   else:
     for image in images:
       image = image.split("/")[-1]
-      info = ask_gpt4v(os.getenv("LLMCAM_DATA", "../data") + "/" + image)
+      info = ask_gpt4v_about_image_file(os.getenv("LLMCAM_DATA", "../data") + "/" + image)
       count.append(info.get(object, 0))
       
   plt.figure(figsize=(10, 6))
@@ -45,4 +44,4 @@ def plot_object(
   plt.savefig(path)
   plt.close()
     
-  return path
+  return json.dumps({"path": path})
