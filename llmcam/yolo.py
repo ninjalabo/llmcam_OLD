@@ -4,8 +4,9 @@
 __all__ = ['detect_objects']
 
 # %% ../nbs/07_yolo_to_fc.ipynb 1
-import torch
+from ultralytics import YOLO
 import json
+import os
 
 # %% ../nbs/07_yolo_to_fc.ipynb 3
 def detect_objects(
@@ -13,9 +14,14 @@ def detect_objects(
         conf: float=0.25 # Confidence threshold
     ) -> str: # JSON format of detection results
     """Run YOLO object detection on an input image."""
-    model = torch.hub.load("ultralytics/yolov5", "yolov5s")
-    model.conf = conf  # NMS confidence threshold
+    model = YOLO('yolov8s.pt')
     
-    results = model(image_path)
-    count = results.pandas().xyxy[0]['name'].value_counts().to_dict()
-    return json.dumps(count)
+    result = model(image_path, conf=conf, exist_ok=True)[0]
+    # result.show()
+    save_dir = os.getenv("LLMCAM_DATA", "../data")
+    output_path = image_path.split("/")[-1]
+    result.save(filename=f"{save_dir}/detection_{output_path}")
+    dict = {}
+    for c in result.boxes.cls:
+        dict[model.names[int(c)]] = dict.get(model.names[int(c)], 0) + 1
+    return json.dumps(dict)

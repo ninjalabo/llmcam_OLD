@@ -17,31 +17,64 @@ import matplotlib.pyplot as plt
 def plot_object(
         images: list[str], # list of images to be extracted
         object: str, # object to detect
-        path: str = "object_count_bar_plot.png", # path to save plot
-        yolo: bool = False # whether to use YOLO or GPT only
+        yolo: bool, # whether to use YOLO
+        gpt: bool, # whether to use GPT
+        path: str = "object_count_bar_plot.png" # path to save plot
         ):
   """Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form."""
-  count = []
+  work_dir = os.getenv("LLMCAM_DATA", "../data")
+  path = os.path.join(work_dir, path)
+  count_yolo = []
+  count_gpt = []
   if yolo:
     for image in images:
       image = image.split("/")[-1]
-      info = json.loads(detect_objects(os.getenv("LLMCAM_DATA", "../data") + "/" + image))
-      count.append(info.get(object, 0))
-  else:
+      info = json.loads(detect_objects(work_dir + "/" + image))
+      # print(info)
+      count_yolo.append(info.get(object, 0))
+  if gpt:
     for image in images:
       image = image.split("/")[-1]
-      info = ask_gpt4v_about_image_file(os.getenv("LLMCAM_DATA", "../data") + "/" + image)
-      count.append(info.get(object, 0))
-      
-  plt.figure(figsize=(10, 6))
-  plt.bar(images, count, color='skyblue')
-  plt.title(f'Number of {object} Detected per Image')
-  plt.xlabel('Image')
-  plt.ylabel(f'Number of {object}')
-  plt.xticks(range(len(images)), [f"Image {i+1}" for i in range(len(images))], rotation=45)
-  plt.grid(axis='y', linestyle='--', alpha=0.7)
+      info = json.loads(ask_gpt4v_about_image_file(work_dir + "/" + image))
+      # print(info)
+      count_gpt.append(info.get(object, 0))
   
-  plt.savefig(path)
-  plt.close()
+  if yolo and gpt:
+    fig, axs = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+        
+    # YOLO plot
+    axs[0].bar(images, count_yolo, color='skyblue')
+    axs[0].set_title(f'YOLO: Number of {object} Detected')
+    axs[0].set_xlabel(f'Number of {object}')
+    axs[0].set_ylabel('Image')
+    axs[0].set_xticks(range(len(images)))
+    axs[0].set_xticklabels([f"Image {i+1}" for i in range(len(images))], rotation=45)
+    axs[0].grid(axis='x', linestyle='--', alpha=0.7)
+    
+    # GPT plot
+    axs[1].bar(images, count_gpt, color='lightcoral')
+    axs[1].set_title(f'GPT: Number of {object} Detected')
+    axs[1].set_xlabel(f'Number of {object}')
+    axs[1].set_xticks(range(len(images)))
+    axs[1].set_xticklabels([f"Image {i+1}" for i in range(len(images))], rotation=45)
+    axs[1].grid(axis='x', linestyle='--', alpha=0.7)
+    
+    # Adjust layout
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close()
+
+  elif yolo or gpt:
+    count = count_gpt if gpt else count_yolo
+    plt.figure(figsize=(10, 6))
+    plt.bar(images, count, color='skyblue')
+    plt.title(f'Number of {object} Detected per Image')
+    plt.xlabel('Image')
+    plt.ylabel(f'Number of {object}')
+    plt.xticks(range(len(images)), [f"Image {i+1}" for i in range(len(images))], rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    plt.savefig(path)
+    plt.close()
     
   return json.dumps({"path": path})

@@ -1,4 +1,5 @@
 *.jpg
+data/*.png
 _docs/
 _proc/
 
