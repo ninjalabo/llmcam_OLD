@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['YTLiveTools', 'session_tools', 'hdrs', 'app', 'scroll_script', 'prepare_handler_schemas', 'execute_handler',
-           'ChatMessage', 'ChatInput', 'ActionButton', 'ActionPanel', 'index', 'send', 'llmcam_chatbot']
+           'ChatMessage', 'ChatInput', 'ActionButton', 'ActionPanel', 'index', 'send', 'get_file', 'llmcam_chatbot']
 
 # %% ../nbs/05_chat_ui.ipynb 4
 import uvicorn
@@ -43,8 +43,10 @@ def execute_handler(
 
 # %% ../nbs/05_chat_ui.ipynb 7
 # Set up the app, including daisyui and tailwind for the chat component
-hdrs = (picolink, Script(src="https://cdn.tailwindcss.com"),
+hdrs = (picolink, 
+        Script(src="https://cdn.tailwindcss.com"),
         Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"),
+        Style("p {color: white;}"),
         MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']))
 app = FastHTML(hdrs=hdrs)
 
@@ -55,14 +57,15 @@ def ChatMessage(
         user: bool  # Whether the message is from the user or assistant
     ):  # Returns a Div containing the chat bubble
     # Set class to change displayed style of bubble
-    bubble_class = "chat-bubble-primary" if user else 'chat-bubble-secondary'
-    chat_class = "chat-end" if user else 'chat-start'
-    return  Div(cls=f"chat {chat_class}")(
+    content_class = "chat-bubble chat-bubble-primary" if user else ""
+    content_class += " marked py-2"
+    user_style = "background-color: #025238; color: white;"
+    return  Div(cls=f"chat chat-end py-4" if user else "py-4")(
                 Div('User' if user else 'Assistant', cls="chat-header"),
                 Div(
                     msg,
-                    cls=f"chat-bubble {bubble_class} marked px-6 py-4", 
-                    style=f"background-color: {'#038a5e' if user else '#025238'}; color: {'black' if user else 'white'};"),
+                    cls=content_class,
+                    style=user_style if user else ""),
                 Hidden(msg, name="contents"),  # Hidden field for submitting past contents to form
                 Hidden("user" if user else "assistant", name="roles")  # Hidden field for submitting corresponding owners
             )
@@ -78,7 +81,8 @@ def ChatInput():  # Returns an input field for the user message
 
 # %% ../nbs/05_chat_ui.ipynb 15
 def ActionButton(
-        content: str  # Text to display on the button
+        content: str,  # Text to display on the button
+        message: str = None  # Message to send when the button is clicked
     ):  # Returns a button with the given content
 
     return Form(
@@ -86,15 +90,21 @@ def ActionButton(
         hx_target="#chatlist",
         hx_swap="beforeend",  # Location: just before the end of element
     )(
-        Hidden(content, name="msg"),
-        Button(content, cls="btn btn-secondary")
+        Hidden(content if message is None else message, name="msg"),
+        Button(
+            content, 
+            cls="btn btn-secondary rounded-2 h-fit", 
+            style="background-color: #025238; color: white; border-color: #025238;")
     )
 
 def ActionPanel():  # Returns a panel of action buttons
     return Div(
+        P("Quick actions", cls="text-lg text-white"),
         ActionButton("Introduce your model GPT-4o"),
-        ActionButton("Extract information from a YouTube Live"),
-        cls="flex flex-row h-fit px-24 gap-4 pt-4"
+        ActionButton(
+            "Extract information from a YouTube Live", 
+            "Capture and extract information from a YouTube Live. Use the default link."),
+        cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
 # %% ../nbs/05_chat_ui.ipynb 20
@@ -120,24 +130,24 @@ scroll_script = Script("""
 @app.get('/')
 def index():
     sidebar = Div(
-        H1("Conversations"),
-        cls="w-[30vw] bg-stone-800"
-    )
-    page =  Div(cls="w-full flex flex-col p-0")(
         ActionPanel(),
+        P("Conversations", cls="text-lg text-white px-4"),
+        cls="w-[30vw] bg-stone-800 flex flex-col p-0"
+    )
+    page =  Div(cls="w-full flex flex-col p-0")(  # Main page
         Form(
             hx_post="/",  # Operation: some POST endpoint with function `send` 
             hx_target="#chatlist",  # Target: element with ID 'chatlist'
             hx_swap="beforeend",  # Location: just before the end of element
-            cls="w-full flex flex-col px-24 h-[90vh]"
+            cls="w-full flex flex-col px-24 h-[100vh]"
         )(
             # The chat list
-            Div(id="chatlist", cls="chat-box overflow-y-auto flex-1 w-full mt-10")(
+            Div(id="chatlist", cls="chat-box overflow-y-auto flex-1 w-full mt-10 p-4")(
                 # One initial message from AI assistant
                 ChatMessage("Hello! I'm a chatbot. How can I help you today?", False),
             ),
             # Input form
-            Div(cls="h-fit mb-5 mt-5 flex space-x-2 mt-2")(
+            Div(cls="h-fit mb-5 mt-5 flex space-x-2 mt-2 p-4")(
                 Group(
                     ChatInput(), 
                     Button("Send", cls="btn btn-primary rounded-r-2xl", style="background-color: #03fcad;"))
@@ -192,6 +202,16 @@ def send(session, msg: str, contents: list[str] = None, roles: list[str] = None)
             ChatInput()) # And clear the input field via an OOB swap
 
 # %% ../nbs/05_chat_ui.ipynb 25
+# Serve files from the 'data' directory
+@app.get("/data/{file_name:path}")
+def get_file(file_name: str):
+    """Serve files dynamically from the 'data' directory."""
+    file_path = Path("../data") / file_name
+    if file_path.exists():
+        return FileResponse(file_path)
+    return {"error": f"File '{file_name}' not found"}
+
+# %% ../nbs/05_chat_ui.ipynb 27
 def llmcam_chatbot(
         host="0.0.0.0",  # The host to listen on
         port=5001,  # The port to listen on
