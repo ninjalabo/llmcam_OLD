@@ -12,6 +12,7 @@ import uvicorn
 import uuid
 import os
 from fasthtml.common import *
+from fastcore.parallel import startthread
 from typing import Callable, Optional
 
 from .fn_to_fc import capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file
@@ -272,6 +273,9 @@ async def get_file(file_name: str):
     return {"error": f"File '{file_name}' not found"}
 
 # %% ../nbs/05_chat_ui.ipynb 31
+import asyncio
+import time
+
 def llmcam_chatbot(
         host="0.0.0.0",  # The host to listen on
         port=5001,  # The port to listen on
@@ -293,5 +297,6 @@ def llmcam_chatbot(
     
     globals()["execute_handler"] = execute_handler
     
-    # Run application with uvicorn
-    uvicorn.run(app, host=host, port=port, log_level="info")
+    server = uvicorn.Server(uvicorn.Config(app, host=host, port=port))
+    async def async_run_server(server): await server.serve()
+    asyncio.run(async_run_server(server))
