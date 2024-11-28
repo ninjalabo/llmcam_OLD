@@ -142,7 +142,7 @@ scroll_script = Script("""
 # %% ../nbs/05_chat_ui.ipynb 21
 title_script = Script("""
     // Function to set the title of the page
-    document.title = "LLMCam Chatbot";
+    document.title = "LLMCAM";
 """)
 
 # %% ../nbs/05_chat_ui.ipynb 22
@@ -152,7 +152,7 @@ def index():
         ActionPanel(),
         P("Conversations", cls="text-lg text-white px-4"),
         cls="w-[30vw] flex flex-col p-0",
-        style="background-color: #332b18;"
+        style="background-color: #826e40;"
     )
     page =  Div(cls="w-full flex flex-col p-0")(  # Main page
         Form(
