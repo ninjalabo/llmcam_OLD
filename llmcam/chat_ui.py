@@ -207,6 +207,11 @@ def send(session, msg: str, contents: list[str] = None, roles: list[str] = None)
 
     # Create chat messages from the provided contents and roles
     messages = [ form_msg(role, content) for role, content in zip(roles, contents) ]
+    if len(messages) == 1:
+        messages = [
+            form_msg("system", "You are a helpful assistant. Use the supplied tools to assist the user. \
+                      If asked to show or display an image or plot, do it by embedding its path via Markdown syntax.")] \
+            + messages
     nof_old_msgs = len(messages) # Number of old messages
     messages.append(form_msg("user", msg))
     
