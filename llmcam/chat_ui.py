@@ -55,7 +55,8 @@ def execute_handler(
 
 # %% ../nbs/05_chat_ui.ipynb 7
 # Set up the app, including daisyui and tailwind for the chat component
-hdrs = (picolink, 
+hdrs = (picolink,
+        Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data")}/ninjalabo.png""", type="image/png"),
         Script(src="https://cdn.tailwindcss.com"),
         Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"),
         Style("p {color: black;}"),
@@ -112,7 +113,7 @@ def ActionButton(
 
 def ActionPanel():  # Returns a panel of action buttons
     return Div(
-        P("Quick actions", cls="text-lg text-white"),
+        P("Quick actions", cls="text-lg text-black"),
         ActionButton("Introduce your model GPT-4o"),
         ActionButton(
             "Extract information from a YouTube Live", 
@@ -150,9 +151,9 @@ title_script = Script("""
 def index():
     sidebar = Div(
         ActionPanel(),
-        P("Conversations", cls="text-lg text-white px-4"),
+        P("Conversations", cls="text-lg text-black px-4"),
         cls="w-[30vw] flex flex-col p-0",
-        style="background-color: #826e40;"
+        style="background-color: White;"
     )
     page =  Div(cls="w-full flex flex-col p-0")(  # Main page
         Form(
