@@ -148,7 +148,18 @@ title_script = Script("""
 
 # %% ../nbs/05_chat_ui.ipynb 22
 @app.get('/')
-def index():
+def index(session):
+    if "tool_session_id" not in session or session["tool_session_id"] not in session_tools:
+        # Initialize tools in session tools and create a session ID
+        session_id = str(uuid.uuid4())
+        session["tool_session_id"] = session_id
+
+        session_tools[session_id] = []
+        session_tools[session_id].extend(default_tools)
+        session_tools[session_id].extend(prepare_handler_schemas(session_id, execute_handler))
+    else:
+        session_id = session["tool_session_id"]
+    
     sidebar = Div(
         ActionPanel(),
         P("Conversations", cls="text-lg text-black px-4"),
@@ -162,6 +173,7 @@ def index():
             hx_swap="beforeend",  # Location: just before the end of element
             cls="w-full flex flex-col px-24 h-[100vh]"
         )(
+            Hidden(session_id, name="session_id"),
             # The chat list
             Div(id="chatlist", cls="chat-box overflow-y-auto flex-1 w-full mt-10 p-4")(
                 # One initial message from AI assistant
@@ -187,20 +199,9 @@ def index():
 # %% ../nbs/05_chat_ui.ipynb 24
 # Handle the form submission
 @app.post('/')
-def send(session, msg: str, contents: list[str] = None, roles: list[str] = None):
+def send(session_id: str, msg: str, contents: list[str] = None, roles: list[str] = None):
     global session_tools
     global execute_handler
-    
-    if "tool_session_id" not in session or session["tool_session_id"] not in session_tools:
-        # Initialize tools in session tools and create a session ID
-        session_id = str(uuid.uuid4())
-        session["tool_session_id"] = session_id
-
-        session_tools[session_id] = []
-        session_tools[session_id].extend(default_tools)
-        session_tools[session_id].extend(prepare_handler_schemas(session_id, execute_handler))
-    else:
-        session_id = session["tool_session_id"]
         
     # If no contents or roles are provided, set them to empty lists
     if not contents: contents = []
