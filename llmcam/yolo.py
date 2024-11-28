@@ -13,7 +13,7 @@ def detect_objects(
         image_path: str, # Path/URL of image
         conf: float=0.25 # Confidence threshold
     ) -> str: # JSON format of detection results
-    """Run YOLO object detection on an input image."""
+    """Detect object in the input image."""
     model = YOLO('yolov8s.pt')
     
     result = model(image_path, conf=conf, exist_ok=True)[0]
