@@ -17,15 +17,21 @@ import matplotlib.pyplot as plt
 def plot_object(
         images: list[str], # list of images to be extracted
         object: str, # object to detect
-        yolo: bool, # whether to use YOLO
-        gpt: bool, # whether to use GPT
+        methods: list[str], # models to apply to extract information
         path: str = "object_count_bar_plot.png" # path to save plot
         ):
-  """Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form."""
+  """
+  Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form.
+  Change the methods name to lowercase before passing to the function
+  """
   work_dir = os.getenv("LLMCAM_DATA", "../data")
   path = os.path.join(work_dir, path)
+
+  yolo = 'yolo' in methods
+  gpt = 'gpt' in methods
   count_yolo = []
   count_gpt = []
+
   if yolo:
     for image in images:
       image = image.split("/")[-1]
@@ -45,8 +51,8 @@ def plot_object(
     # YOLO plot
     axs[0].bar(images, count_yolo, color='skyblue')
     axs[0].set_title(f'YOLO: Number of {object} Detected')
-    axs[0].set_xlabel(f'Number of {object}')
-    axs[0].set_ylabel('Image')
+    axs[0].set_ylabel(f'Number of {object}')
+    axs[0].set_xlabel('Image')
     axs[0].set_xticks(range(len(images)))
     axs[0].set_xticklabels([f"Image {i+1}" for i in range(len(images))], rotation=45)
     axs[0].grid(axis='x', linestyle='--', alpha=0.7)
@@ -54,7 +60,7 @@ def plot_object(
     # GPT plot
     axs[1].bar(images, count_gpt, color='lightcoral')
     axs[1].set_title(f'GPT: Number of {object} Detected')
-    axs[1].set_xlabel(f'Number of {object}')
+    axs[0].set_xlabel('Image')
     axs[1].set_xticks(range(len(images)))
     axs[1].set_xticklabels([f"Image {i+1}" for i in range(len(images))], rotation=45)
     axs[1].grid(axis='x', linestyle='--', alpha=0.7)

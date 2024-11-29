@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['session_messages', 'session_tools', 'default_tools', 'hdrs', 'app', 'scroll_script', 'title_script',
            'prepare_handler_schemas', 'execute_handler', 'init_session', 'ChatMessage', 'ChatInput', 'ActionButton',
-           'ActionPanel', 'index', 'chat_disconnect', 'wschat', 'get_file', 'llmcam_chatbot']
+           'ActionPanel', 'ToolPanel', 'index', 'chat_disconnect', 'wschat', 'get_file', 'llmcam_chatbot']
 
 # %% ../nbs/05_chat_ui.ipynb 4
 import uvicorn
@@ -144,6 +144,28 @@ def ActionPanel(
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
+def ToolPanel(
+        session_id: str  # Session ID to use
+    ):  # Returns a panel of usable tools
+
+    available_services = session_tools.get(session_id, [])
+
+    # Generate list items for each available tool
+    items = []
+    if available_services:
+        for service in available_services:
+            service_desc = service['function']['description']
+            items.append(Li(f"{service_desc}", cls="text-sm text-black"))
+    else:
+        items.append(Li("No services available", cls="text-sm italic text-gray-500"))
+
+    return Div(
+        P("Available Tools", cls="text-lg text-black"),
+        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 200px; overflow-y:auto;"),
+        id="toollist",
+        cls="flex flex-col h-fit gap-4 py-4 px-4"
+    )
+
 # %% ../nbs/05_chat_ui.ipynb 22
 scroll_script = Script("""
   // Function to scroll to the bottom of an element
@@ -178,6 +200,7 @@ async def index(session):
     # Set up the chat UI
     sidebar = Div(
         ActionPanel(session_id=session_id),
+        ToolPanel(session_id=session_id),
         P("Conversations", cls="text-lg text-black px-4"),
         cls="w-[30vw] flex flex-col p-0",
         style="background-color: White;"
@@ -259,6 +282,8 @@ If asked to show or display an image or plot, do it by embedding its path starti
     await send(Div(ChatMessage(
             messages[-1]["content"],
             messages[-1]["role"] == "user"), hx_swap_oob='beforeend', id="chatlist"))
+    
+    await send(Div(ToolPanel(session_id=session_id), hx_swap_oob='true', id='toollist'))
     return
 
 # %% ../nbs/05_chat_ui.ipynb 29
