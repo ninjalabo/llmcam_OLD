@@ -9,6 +9,7 @@ from pathlib import Path
 from PIL import Image
 from io import BytesIO
 from datetime import datetime
+import os
 
 # %% ../nbs/12_dtcam.ipynb 4
 stations_url = "https://tie.digitraffic.fi/api/weathercam/v1/stations"
@@ -38,7 +39,8 @@ def capture(preset:dict)->Path:
     #img.show()
     dt = datetime.strptime(req.headers["last-modified"], '%a, %d %b %Y %H:%M:%S %Z')
     dtstr = dt.strftime("%Y.%m.%d_%H:%M:%S")
-    path = f"../data/cap_{dtstr}_{preset['presentationName']}_{preset['id']}.jpg"
+    dir = os.getenv("LLMCAM_DATA", "../data")
+    path = f"{dir}/cap_{dtstr}_{preset['presentationName']}_{preset['id']}.jpg"
     img.save(path, format="JPEG")
     return req.headers, path
 

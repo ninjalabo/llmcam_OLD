@@ -95,7 +95,7 @@ def fname(prefix, dt, pl): return f"""{prefix}{dt.strftime("%Y.%m.%d_%H:%M:%S")}
 class YTLive:
     def __init__(self,
                  url:str, # YouTube Live URL
-                 data_dir:Path = Path("../data/"), # directory to store captured images
+                 data_dir:Path = Path(os.getenv("LLMCAM_DATA", "../data")), # directory to store captured images
                  place:str="nowhere", # place name
                 ):
         self.url = url
@@ -123,7 +123,7 @@ class YTLive:
 class NHsta(YTLive):
     def __init__(self,
                  url:str="https://www.youtube.com/watch?v=LMZQ7eFhm58", # YouTube Live URL
-                 data_dir:Path = Path("../data/"), # directory to store captured images
+                 data_dir:Path = Path(os.getenv("LLMCAM_DATA", "../data")), # directory to store captured images
                  place:str="unclear", # place name if OCR doesn't work
                 ):
         super().__init__(url, data_dir, place)
