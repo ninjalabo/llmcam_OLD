@@ -6,7 +6,7 @@
 __all__ = ['plot_object']
 
 # %% ../nbs/14_plotting.ipynb 3
-from .file_manager import list_image_files
+from .file_manager import list_image_files, list_plot_files
 from .yolo import detect_objects
 from .fn_to_fc import tool_schema, complete, form_msgs, print_msgs, ask_gpt4v_about_image_file
 import os
@@ -17,18 +17,18 @@ import matplotlib.pyplot as plt
 def plot_object(
         images: list[str], # list of images to be extracted
         object: str, # object to detect
-        methods: list[str], # models to apply to extract information
-        path: str = "object_count_bar_plot.png" # path to save plot
+        methods: list[str] # models to apply to extract information
         ):
   """
   Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form.
   Change the methods name to lowercase before passing to the function
   """
   work_dir = os.getenv("LLMCAM_DATA", "../data")
-  path = os.path.join(work_dir, path)
+  number = len(list_plot_files())
+  path = os.path.join(work_dir, f"{number}_object_count_plot.jpg")
 
-  yolo = 'yolo' in methods
-  gpt = 'gpt' in methods
+  yolo = any('yolo' in method.lower() for method in methods)
+  gpt = any('gpt' in method.lower() for method in methods)
   count_yolo = []
   count_gpt = []
 
@@ -36,13 +36,11 @@ def plot_object(
     for image in images:
       image = image.split("/")[-1]
       info = json.loads(detect_objects(work_dir + "/" + image))
-      # print(info)
       count_yolo.append(info.get(object, 0))
   if gpt:
     for image in images:
       image = image.split("/")[-1]
       info = json.loads(ask_gpt4v_about_image_file(work_dir + "/" + image))
-      # print(info)
       count_gpt.append(info.get(object, 0))
   
   if yolo and gpt:
@@ -82,5 +80,5 @@ def plot_object(
     
     plt.savefig(path)
     plt.close()
-    
+  
   return json.dumps({"path": path})
