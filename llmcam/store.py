@@ -57,7 +57,7 @@ def add_api_tools(
     oas = load_oas(oas_url, oas_destination, overwrite=True)
 
     # Create tool schema and append to toolbox
-    schema = toolbox_schema(base_url, oas, service_name=service_name, fixup=generate_request)
+    schema = api_schema(base_url, oas, service_name=service_name, fixup=generate_request)
     tools.extend(schema)
 
 # %% ../nbs/10_store.ipynb 22

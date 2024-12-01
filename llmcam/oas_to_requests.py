@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['MIME_TYPES', 'TRANSFERABLE_TYPES', 'retrieve_ref_parts', 'extract_refs', 'transform_property', 'generate_request',
-           'toolbox_schema']
+           'api_schema']
 
 # %% ../nbs/04_oas_to_requests.ipynb 3
 import requests
@@ -326,12 +326,12 @@ def generate_request(
         return {"message": response.text}
 
 # %% ../nbs/04_oas_to_requests.ipynb 28
-def toolbox_schema(
+def api_schema(
         base_url: str,  # The base URL of the API
         oas: dict,  # The OpenAPI schema
         service_name: Optional[str]=None,  # The name of the service
         fixup:Callable=None, # a fixup function to execute a REST API when a function name isn't found.
-    ) -> dict:  # The toolbox schema
+    ) -> dict:  # The api schema
     """Form the toolbox schema from the OpenAPI schema."""
     
     # Extract the references
