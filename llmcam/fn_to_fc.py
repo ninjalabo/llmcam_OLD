@@ -210,9 +210,9 @@ def print_msg(msg):
     except:
         print(msg)
 
-def print_msgs(msgs, skip_tools=True):
+def print_msgs(msgs, with_tool=False):
     for msg in msgs:
-        if skip_tools and 'tool_calls' in msg.keys() or 'tool_call_id' in msg.keys():
+        if not with_tool and any(key in msg for key in ('tool_calls', 'tool_call_id')):
             continue
         print_msg(msg)
 
