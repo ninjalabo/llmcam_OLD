@@ -225,7 +225,53 @@ noti_script = Script("""
     });
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 28
+# %% ../nbs/05_chat_ui.ipynb 27
+def ToolPanel(
+        session_id: str  # Session ID to use
+    ):  # Returns a panel of usable tools
+
+    available_services = session_tools.get(session_id, [])
+
+    # Generate list items for each available tool
+    items = []
+    if available_services:
+        for service in available_services:
+            service_desc = service['function']['description']
+            items.append(Li(f"{service_desc}", cls="text-sm text-black"))
+    else:
+        items.append(Li("No services available", cls="text-sm italic text-gray-500"))
+
+    return Div(
+        P("Available Tools", cls="text-lg text-black"),
+        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 200px; overflow-y:auto;"),
+        id="toollist",
+        cls="flex flex-col h-fit gap-4 py-4 px-4"
+    )
+
+# %% ../nbs/05_chat_ui.ipynb 30
+def NotiMessage(
+        message: str = "No message"  # Message to display
+    ):  # Returns a notification message hidden from the UI view
+    return Hidden(message, id="notification", cls="text-black")
+
+def NotiButton(
+        session_id: str  # Session ID to use
+    ):  # Returns a hidden button to trigger notification websocket connection
+    return Form(
+        ws_send=True,
+        hx_ext='ws', ws_connect='/wsnoti',
+        style="display: none;"
+    )(
+        Hidden(session_id, name="session_id"),
+        Button(
+            "Notification", 
+            id="connect-btn", 
+            cls="btn btn-primary rounded-2 h-fit", 
+            style="display: none;"
+        )
+    )
+
+# %% ../nbs/05_chat_ui.ipynb 34
 scroll_script = Script("""
   // Function to scroll to the bottom of an element
   function scrollToBottom(element) {
@@ -244,13 +290,13 @@ scroll_script = Script("""
   observer.observe(expandingElement, { childList: true, subtree: true });
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 29
+# %% ../nbs/05_chat_ui.ipynb 35
 title_script = Script("""
     // Function to set the title of the page
     document.title = "LLMCAM";
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 30
+# %% ../nbs/05_chat_ui.ipynb 36
 @app.get('/')
 async def index(session):
     # Initialize the session
@@ -295,7 +341,7 @@ async def index(session):
         data_theme="wireframe",
         cls="h-[100vh] w-full relative flex flex-row items-stretch overflow-hidden transition-colors z-0 p-0",)
 
-# %% ../nbs/05_chat_ui.ipynb 32
+# %% ../nbs/05_chat_ui.ipynb 38
 def noti_disconnect(ws):
     """Remove session ID from session notification sender on websocket disconnect"""
     session_id = ws.scope.get("session_id")
@@ -304,7 +350,7 @@ def noti_disconnect(ws):
     if session_id in session_tools:
         del session_tools[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 33
+# %% ../nbs/05_chat_ui.ipynb 39
 @app.ws('/wsnoti')
 async def wsnoti(ws, send, session_id: str):
     # Initialize the session
@@ -321,7 +367,7 @@ async def wsnoti(ws, send, session_id: str):
     # Send a notification to the client
     send_noti("Notification service enabled.")
 
-# %% ../nbs/05_chat_ui.ipynb 37
+# %% ../nbs/05_chat_ui.ipynb 43
 # On websocket disconnect, remove the session ID from the session messages and tools
 def chat_disconnect(ws):
     """Remove session ID from session messages and tools on websocket disconnect"""
@@ -331,7 +377,7 @@ def chat_disconnect(ws):
     if session_id in session_tools:
         del session_tools[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 38
+# %% ../nbs/05_chat_ui.ipynb 44
 # The chatbot websocket handler
 @app.ws('/wschat', disconn=chat_disconnect)
 async def wschat(ws, msg: str, send, session_id: str):
@@ -373,7 +419,7 @@ If asked to show or display an image or plot, do it by embedding its path starti
     await send(Div(ToolPanel(session_id=session_id), hx_swap_oob='true', id='toollist'))
     return
 
-# %% ../nbs/05_chat_ui.ipynb 40
+# %% ../nbs/05_chat_ui.ipynb 46
 # Serve files from the 'data' directory
 @app.get("/data/{file_name:path}")
 async def get_file(file_name: str):
@@ -384,7 +430,7 @@ async def get_file(file_name: str):
         return FileResponse(file_path)
     return {"error": f"File '{file_name}' not found"}
 
-# %% ../nbs/05_chat_ui.ipynb 42
+# %% ../nbs/05_chat_ui.ipynb 48
 import asyncio
 import time
 
