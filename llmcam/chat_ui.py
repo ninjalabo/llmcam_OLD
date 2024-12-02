@@ -81,7 +81,7 @@ def init_session(session_id: Optional[str] = None):
 # %% ../nbs/05_chat_ui.ipynb 9
 # Set up the app, including daisyui and tailwind for the chat component
 hdrs = (picolink,
-        Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data")}/favicon.ico""", type="image/png"),
+        Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data").split("/")[-1]}/favicon.ico""", type="image/png"),
         Script(src="https://cdn.tailwindcss.com"),
         Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"),
         Script(src="https://unpkg.com/htmx.org"),
@@ -99,13 +99,12 @@ def ChatMessage(
     # Set class to change displayed style of bubble
     content_class = "chat-bubble chat-bubble-primary" if user else ""
     content_class += " marked py-2"
-    user_style = "background-color: #fff0c7;"
     return  Div(cls=f"chat chat-end py-4" if user else "py-4")(
                 Div('User' if user else 'Assistant', cls="chat-header"),
                 Div(
                     msg,
                     cls=content_class,
-                    style=user_style if user else "")
+                )
             )
 
 # %% ../nbs/05_chat_ui.ipynb 14
@@ -133,7 +132,7 @@ def ActionButton(
         Button(
             content, 
             cls="btn btn-secondary rounded-2 h-fit", 
-            style="background-color: #ffe485; color: black; border-color: #ffe485;")
+        )
     )
 
 def ActionPanel(
@@ -166,7 +165,7 @@ def ToolPanel(
 
     return Div(
         P("Available Tools", cls="text-lg text-black"),
-        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 200px; overflow-y:auto;"),
+        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 800px; overflow-y:auto;"),
         id="toollist",
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
@@ -260,9 +259,8 @@ async def index(session):
         ToolPanel(session_id=session_id),
         NotiButton(session_id=session_id),
         NotiMessage(),
-        P("Conversations", cls="text-lg text-black px-4"),
-        cls="w-[30vw] flex flex-col p-0",
-        style="background-color: White;"
+        cls="w-[50vw] flex flex-col p-0",
+        style="background-color: WhiteSmoke;"
     )
     page =  Div(cls="w-full flex flex-col p-0")(  # Main page
         Form(
@@ -280,7 +278,7 @@ async def index(session):
             Div(cls="h-fit mb-5 mt-5 flex space-x-2 mt-2 p-4")(
                 Group(
                     ChatInput(), 
-                    Button("Send", cls="btn btn-primary rounded-r-2xl", style="background-color: #ffe485;"))
+                    Button("Send", cls="btn btn-primary rounded-r-2xl"))
             ),
             scroll_script
         ),
@@ -291,7 +289,7 @@ async def index(session):
         sidebar,
         page, 
         title="Chatbot",
-        data_theme="lemonade", 
+        data_theme="wireframe",
         cls="h-[100vh] w-full relative flex flex-row items-stretch overflow-hidden transition-colors z-0 p-0",)
 
 # %% ../nbs/05_chat_ui.ipynb 32
