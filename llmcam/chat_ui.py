@@ -20,7 +20,7 @@ from .fn_to_fc import tool_schema, complete, form_msg
 from .store import add_api_tools, add_function_tools, remove_tools
 from .store import execute_handler_core, handler_schema
 from .yolo import detect_objects
-from .dtcam import cap
+from .dtcam import *
 from .file_manager import list_image_files, list_detection_files
 from .plotting import plot_object
 from .bash_command import *
@@ -41,6 +41,7 @@ default_tools = [tool_schema(fn) for fn in (
     list_detection_files,
     plot_object,
     execute_bash_command,
+    camera_address_book,
 )]
 
 # %% ../nbs/05_chat_ui.ipynb 7
