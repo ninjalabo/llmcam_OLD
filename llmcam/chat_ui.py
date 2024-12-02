@@ -24,7 +24,8 @@ from .store import execute_handler_core, handler_schema
 from .yolo import detect_objects
 from .dtcam import cap
 from .file_manager import list_image_files, list_detection_files
-from .plotting import plot_object 
+from .plotting import plot_object
+from .bash_command import *
 
 # %% ../nbs/05_chat_ui.ipynb 5
 # Set up database for information per session
@@ -41,7 +42,9 @@ default_tools = [tool_schema(fn) for fn in (
     cap,
     list_image_files,
     list_detection_files,
-    plot_object)]
+    plot_object,
+    execute_bash_command,
+)]
 
 # %% ../nbs/05_chat_ui.ipynb 7
 # Utility functions to manage tools per session
