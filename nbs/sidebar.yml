@@ -16,6 +16,8 @@ website:
       - 12_dtcam.ipynb
       - 13_fle_manager.ipynb
       - 14_plotting.ipynb
+      - 15_notification.ipynb
+      - 16_bash_command.ipynb
       - 81_demo_scenario_1.ipynb
       - 82_demo_scenario_2.ipynb
       - 83_demo_scenario_3.ipynb
