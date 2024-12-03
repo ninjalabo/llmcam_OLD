@@ -283,7 +283,7 @@ def ToolPanel(
 
     return Div(
         P("Available Tools", cls="text-lg text-black"),
-        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 800px; overflow-y:auto;"),
+        Ul(*items, cls="list-disc list-inside px-6", style="max-height: 60vh; overflow-y:auto;"),
         id="toollist",
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
