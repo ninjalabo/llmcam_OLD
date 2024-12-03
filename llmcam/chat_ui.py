@@ -5,10 +5,10 @@
 # %% auto 0
 __all__ = ['session_messages', 'session_tools', 'session_notis', 'default_tools', 'hdrs', 'app', 'noti_script', 'scroll_script',
            'title_script', 'prepare_handler_schemas', 'execute_handler', 'execute_send_notification', 'execute_stopper',
-           'start_notification_stream', 'prepare_notification_schemas', 'execute_start_notification_stream',
-           'init_session', 'ChatMessage', 'ChatInput', 'ActionButton', 'ActionPanel', 'ToolPanel', 'NotiMessage',
-           'NotiButton', 'index', 'noti_disconnect', 'wsnoti', 'chat_disconnect', 'wschat', 'get_file',
-           'llmcam_chatbot']
+           'prepare_stopper_schema', 'start_notification_stream', 'prepare_notification_schemas',
+           'execute_start_notification_stream', 'init_session', 'ChatMessage', 'ChatInput', 'ActionButton',
+           'ActionPanel', 'ToolPanel', 'NotiMessage', 'NotiButton', 'index', 'noti_disconnect', 'wsnoti',
+           'chat_disconnect', 'wschat', 'get_file', 'llmcam_chatbot']
 
 # %% ../nbs/05_chat_ui.ipynb 4
 import uvicorn
@@ -85,6 +85,25 @@ def execute_stopper(function_name, session_id, noti_id, **kwargs):
     notis[noti_id].stop()  # Stop the stream with the given ID
     return 'Notification stream stopped'
 
+def prepare_stopper_schema(session_id: str):
+    return {
+        'type': 'function',
+        'function': {
+            'name': 'stop_notification',
+            'description': 'Stop the notification stream',
+            'parameters': {
+                'type': 'object', 
+                'properties': {
+                    'noti_id': {'type': 'string', 'description': 'ID of the notification stream to stop'}
+                }, 
+                'required': ['noti_id']},
+            'metadata': {
+                'session_id': session_id,
+            },
+            'fixup': f"{execute_stopper.__module__}.{execute_stopper.__name__}"
+        }
+    }
+
 def start_notification_stream(
     session_id: str,  # Session ID to use
     messages: list,  # All the previous messages in the conversation
@@ -109,25 +128,13 @@ def start_notification_stream(
             },
             'parameters': {'type': 'object',
                 'properties': {'msg': {'type': 'string',
-                'description': 'No description provided.'}},
+                'description': 'Notification message to send'}},
                 'required': ['msg']},
             'fixup': f"{execute_send_notification.__module__}.{execute_send_notification.__name__}"
         },
     }
 
-    stopper_schema = {
-        'type': 'function',
-        'function': {
-            'name': 'stop_notification',
-            'description': 'Stop the notification stream',
-            'parameters': {'type': 'object', 'properties': {}, 'required': []},
-            'metadata': {
-                'session_id': session_id,
-                'noti_id': noti_id
-            },
-            'fixup': f"{execute_stopper.__module__}.{execute_stopper.__name__}"
-        }
-    }
+    stopper_schema = prepare_stopper_schema(session_id)
 
     # Define a function to start the stream
     def stream_starter(tools, messages):
@@ -136,6 +143,8 @@ def start_notification_stream(
 
     # Extract the tools for the session
     tools = session_tools[session_id]
+    # Remove the stop_notification tool from the list of tools to avoid duplication
+    tools = [ tool for tool in tools if tool['function']['name'] != 'stop_notification' ]  
 
     # Start the notification stream
     notification_stream_core(
@@ -170,11 +179,12 @@ def init_session(session_id: Optional[str] = None):
         # Initialize tools in session tools and create a session ID
         session_id = str(uuid.uuid4())
 
-        # Add default tools, prepare handler schemas, and prepare notification schema
+        # Add default tools, prepare handler schemas, prepare notification schemas, and prepare stopper schema
         session_tools[session_id] = []
-        session_tools[session_id].extend(default_tools)
         session_tools[session_id].extend(prepare_handler_schemas(session_id, execute_handler))
+        session_tools[session_id].extend(default_tools)
         session_tools[session_id].append(prepare_notification_schemas(session_id, execute_start_notification_stream))
+        session_tools[session_id].append(prepare_stopper_schema(session_id))
 
         # Initialize messages in session messages
         session_messages[session_id] = []
@@ -187,9 +197,13 @@ hdrs = (picolink,
         Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data").split("/")[-1]}/favicon.ico""", type="image/png"),
         Script(src="https://cdn.tailwindcss.com"),
         Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"),
+        # Link(rel="preconnect", href="https://fonts.googleapis.com"),
+        # Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=""),
+        # Link(href="https://fonts.googleapis.com/css2?family=Patrick+Hand", rel="stylesheet"),
         Script(src="https://unpkg.com/htmx.org"),
-        Style("p {color: black;}"),
-        Style("li {color: black;}"),
+        Style("p {color: black; font-family: 'Georgia', Times, serif;}"),
+        Style("li {color: black; font-family: 'Georgia', Times, serif;}"),
+        Style("main {font-family: 'Georgia', Times, serif;}"),
         MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']))
 app = FastHTML(hdrs=hdrs, exts="ws")
 
@@ -234,7 +248,8 @@ def ActionButton(
         Hidden(content if message is None else message, name="msg"),
         Button(
             content, 
-            cls="btn btn-secondary rounded-2 h-fit", 
+            cls="btn btn-secondary rounded-2 h-fit",
+            style="font-family: 'Georgia', Times, serif;" 
         )
     )
 
@@ -381,7 +396,9 @@ async def index(session):
             Div(cls="h-fit mb-5 mt-5 flex space-x-2 mt-2 p-4")(
                 Group(
                     ChatInput(), 
-                    Button("Send", cls="btn btn-primary rounded-r-2xl"))
+                    Button("Send", cls="btn btn-primary rounded-r-2xl"),
+                    style="font-family: 'Georgia', Times, serif;"
+                )
             ),
             scroll_script
         ),
@@ -399,11 +416,10 @@ async def index(session):
 def noti_disconnect(ws):
     """Remove session ID from session notification sender on websocket disconnect"""
     session_id = ws.scope.get("session_id")
-    if session_id in session_messages:
-        del session_messages[session_id]
-    if session_id in session_tools:
-        del session_tools[session_id]
     if session_id in session_notis:
+        _, notis = session_notis[session_id]
+        for noti in notis.values():
+            noti.stop()
         del session_notis[session_id]
 
 # %% ../nbs/05_chat_ui.ipynb 40
@@ -470,8 +486,7 @@ If asked to show or display an image or plot, do it by embedding its path starti
 `../data/<filename>` in Markdown syntax. \
 When asked to monitor or notify about a process, do not operate the condition but instead\
 start a notification stream to monitor the process and \
-use the available tools to stop stream or send notifications. \
-By default, stop stream after one notification sent."))
+use the available tools to stop stream or send notifications."))
     messages.append(form_msg("user", msg))
     await send(
         Div(ChatMessage(
