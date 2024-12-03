@@ -33,19 +33,25 @@ class StreamThread(Thread):
 # %% ../nbs/15_notification.ipynb 5
 def notification_stream_core(
     tools: list,  # Tools to use
-    send_notification: Callable,  # Function to send the notification
     messages: list,  # Previous conversation with the user
     stream_starter: Optional[Callable] = None,  # Function to start the stream
-    stream_stopper: Optional[Callable] = None  # Function to stop the stream
+    send_notification: Optional[Callable] = None,  # Function to send the notification
+    stream_stopper: Optional[Callable] = None,  # Function to stop the stream
+    send_notification_schema: Optional[dict] = None,  # Schema for the send_notification function
+    stream_stopper_schema: Optional[dict] = None,  # Schema for the stream_stopper function
 ) -> str:
     """Core function to start and stop the notifications stream"""
     # Copy the messages to avoid modifying the original list
     submessages = [ message for message in messages ]
 
+    # Extract subtools schemas
+    send_notification_schema = send_notification_schema or tool_schema(send_notification, 'send_notification')
+    stream_stopper_schema = stream_stopper_schema or tool_schema(stream_stopper, 'send_notification')
+
     # Add sending notification services to tool schema
     subtools = [ tool for tool in tools if tool['function']['name'] != 'start_notification_stream' ]
-    subtools.append(tool_schema(send_notification, 'send_notification'))
-    subtools.append(tool_schema(stream_stopper, 'send_notification'))
+    subtools.append(send_notification_schema)
+    subtools.append(stream_stopper_schema)
 
     # Start the notifications stream
     stream_starter(subtools, submessages)
