@@ -187,9 +187,13 @@ hdrs = (picolink,
         Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data").split("/")[-1]}/favicon.ico""", type="image/png"),
         Script(src="https://cdn.tailwindcss.com"),
         Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css"),
+        # Link(rel="preconnect", href="https://fonts.googleapis.com"),
+        # Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=""),
+        # Link(href="https://fonts.googleapis.com/css2?family=Patrick+Hand", rel="stylesheet"),
         Script(src="https://unpkg.com/htmx.org"),
-        Style("p {color: black;}"),
-        Style("li {color: black;}"),
+        Style("p {color: black; font-family: 'Georgia', Times, serif;}"),
+        Style("li {color: black; font-family: 'Georgia', Times, serif;}"),
+        Style("main {font-family: 'Georgia', Times, serif;}"),
         MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']))
 app = FastHTML(hdrs=hdrs, exts="ws")
 
@@ -234,7 +238,8 @@ def ActionButton(
         Hidden(content if message is None else message, name="msg"),
         Button(
             content, 
-            cls="btn btn-secondary rounded-2 h-fit", 
+            cls="btn btn-secondary rounded-2 h-fit",
+            style="font-family: 'Georgia', Times, serif;" 
         )
     )
 
@@ -381,7 +386,9 @@ async def index(session):
             Div(cls="h-fit mb-5 mt-5 flex space-x-2 mt-2 p-4")(
                 Group(
                     ChatInput(), 
-                    Button("Send", cls="btn btn-primary rounded-r-2xl"))
+                    Button("Send", cls="btn btn-primary rounded-r-2xl"),
+                    style="font-family: 'Georgia', Times, serif;"
+                )
             ),
             scroll_script
         ),
