@@ -94,7 +94,9 @@ def prepare_stopper_schema(session_id: str):
             'parameters': {
                 'type': 'object', 
                 'properties': {
-                    'noti_id': {'type': 'string', 'description': 'ID of the notification stream to stop'}
+                    'noti_id': {
+                        'type': 'string', 
+                        'description': 'Unique UUID of the notification stream to stop, provided when the stream was started'}
                 }, 
                 'required': ['noti_id']},
             'metadata': {
@@ -484,9 +486,8 @@ async def wschat(ws, msg: str, send, session_id: str):
 "You are a helpful assistant. Use the supplied tools to assist the user. \
 If asked to show or display an image or plot, do it by embedding its path starting with \
 `../data/<filename>` in Markdown syntax. \
-When asked to monitor or notify about a process, do not operate the condition but instead\
-start a notification stream to monitor the process and \
-use the available tools to stop stream or send notifications."))
+When asked to monitor or notify about a process, first start a notification stream and then \
+use the available tools to stop stream or send notifications from the stream."))
     messages.append(form_msg("user", msg))
     await send(
         Div(ChatMessage(
