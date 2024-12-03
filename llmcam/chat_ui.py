@@ -30,13 +30,13 @@ from .plotting import plot_object
 from .notification import notification_stream_core, process_notification_schema, StreamThread
 from .bash_command import *
 
-# %% ../nbs/05_chat_ui.ipynb 5
+# %% ../nbs/05_chat_ui.ipynb 6
 # Set up database for information per session
 session_messages = {}  # Messages for each session
 session_tools = {}  # Tools for each session
 session_notis = {}  # Sender and notification streams for each session
 
-# %% ../nbs/05_chat_ui.ipynb 6
+# %% ../nbs/05_chat_ui.ipynb 7
 # Set up default tools
 default_tools = [tool_schema(fn) for fn in (
     capture_youtube_live_frame_and_save, 
@@ -49,7 +49,7 @@ default_tools = [tool_schema(fn) for fn in (
     execute_bash_command,
 )]
 
-# %% ../nbs/05_chat_ui.ipynb 7
+# %% ../nbs/05_chat_ui.ipynb 9
 # Utility functions to manage tools per session
 def prepare_handler_schemas(
     session_id: str,  # Session ID to use
@@ -68,18 +68,20 @@ def execute_handler(
     tools = session_tools[session_id]
     return execute_handler_core(tools, function_name, **kwargs)
 
-# %% ../nbs/05_chat_ui.ipynb 8
+# %% ../nbs/05_chat_ui.ipynb 11
 # Utility functions to manage notifications per session
 def execute_send_notification(function_name, session_id, msg, **kwargs):
+    """Fixup function to send a notification."""
     global session_notis
-    sender, _ = session_notis[session_id]
+    sender, _ = session_notis[session_id]  # Get the sender
     sender(msg)
     return 'Notification sent'
 
 def execute_stopper(function_name, session_id, noti_id, **kwargs):
+    """Fixup function to stop a notification stream."""
     global session_notis
-    _, notis = session_notis[session_id]
-    notis[noti_id].stop()
+    _, notis = session_notis[session_id]  # Get the notification streams 
+    notis[noti_id].stop()  # Stop the stream with the given ID
     return 'Notification stream stopped'
 
 def start_notification_stream(
@@ -90,10 +92,12 @@ def start_notification_stream(
     global session_notis
     global session_tools
 
-    _, notis = session_notis[session_id]
+    _, notis = session_notis[session_id]  # Get the notification streams
 
+    # Define a new notification stream with a unique ID
     noti_id = str(uuid.uuid4())
     
+    # Describe the sender and stopper functions
     sender_schema = {
         'type': 'function',
         'function': {
@@ -124,13 +128,16 @@ def start_notification_stream(
         }
     }
 
+    # Define a function to start the stream
     def stream_starter(tools, messages):
         notis[noti_id] = StreamThread(noti_id, tools, messages)
         notis[noti_id].start()
 
+    # Extract the tools for the session
     tools = session_tools[session_id]
 
-    return notification_stream_core(
+    # Start the notification stream
+    notification_stream_core(
         tools, 
         messages,
         stream_starter=stream_starter,
@@ -138,26 +145,31 @@ def start_notification_stream(
         stream_stopper_schema=stopper_schema
     )
 
-# %% ../nbs/05_chat_ui.ipynb 9
+    # Return the ID of the notification stream  
+    return f"Notification stream started with ID {noti_id}" 
+
+# %% ../nbs/05_chat_ui.ipynb 13
 def prepare_notification_schemas(
         session_id: str,  # Session ID to use
         fixup: Callable = None,  # Optional function to fix up the execution
     ):  # Prepare the notification schema
-    schema = process_notification_schema(start_notification_stream)
-    schema['function']['metadata']['session_id'] = session_id
+    schema = process_notification_schema(start_notification_stream)  # Get the schema for starting notification stream
+    # Set additional metadata
+    schema['function']['metadata']['session_id'] = session_id  
     if fixup: schema['function']['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
     return schema
 
 def execute_start_notification_stream(function_name, session_id, messages, **kwargs):
+    """Fixup function to start a notification stream."""
     return start_notification_stream(session_id, messages)
 
-# %% ../nbs/05_chat_ui.ipynb 10
+# %% ../nbs/05_chat_ui.ipynb 14
 def init_session(session_id: Optional[str] = None):
     if session_id is None or session_id not in session_messages:
         # Initialize tools in session tools and create a session ID
         session_id = str(uuid.uuid4())
 
-        # Add default tools and prepare handler schemas
+        # Add default tools, prepare handler schemas, and prepare notification schema
         session_tools[session_id] = []
         session_tools[session_id].extend(default_tools)
         session_tools[session_id].extend(prepare_handler_schemas(session_id, execute_handler))
@@ -168,7 +180,7 @@ def init_session(session_id: Optional[str] = None):
     
     return session_id
 
-# %% ../nbs/05_chat_ui.ipynb 11
+# %% ../nbs/05_chat_ui.ipynb 16
 # Set up the app, including daisyui and tailwind for the chat component
 hdrs = (picolink,
         Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data").split("/")[-1]}/favicon.ico""", type="image/png"),
@@ -180,7 +192,7 @@ hdrs = (picolink,
         MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']))
 app = FastHTML(hdrs=hdrs, exts="ws")
 
-# %% ../nbs/05_chat_ui.ipynb 13
+# %% ../nbs/05_chat_ui.ipynb 18
 # Chat message component (renders a chat bubble)
 def ChatMessage(
         msg: str,  # Message to display
@@ -197,7 +209,7 @@ def ChatMessage(
                 )
             )
 
-# %% ../nbs/05_chat_ui.ipynb 16
+# %% ../nbs/05_chat_ui.ipynb 21
 # The input field for the user message. Also used to clear the
 # input field after sending a message via an OOB swap
 def ChatInput():  # Returns an input field for the user message
@@ -206,7 +218,7 @@ def ChatInput():  # Returns an input field for the user message
                  hx_swap_oob='true'  # Re-render the element to remove submitted message
                 )
 
-# %% ../nbs/05_chat_ui.ipynb 19
+# %% ../nbs/05_chat_ui.ipynb 24
 def ActionButton(
         session_id: str,  # Session ID to use
         content: str,  # Text to display on the button
@@ -237,7 +249,7 @@ def ActionPanel(
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
-# %% ../nbs/05_chat_ui.ipynb 23
+# %% ../nbs/05_chat_ui.ipynb 28
 def ToolPanel(
         session_id: str  # Session ID to use
     ):  # Returns a panel of usable tools
@@ -260,7 +272,7 @@ def ToolPanel(
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
-# %% ../nbs/05_chat_ui.ipynb 26
+# %% ../nbs/05_chat_ui.ipynb 31
 def NotiMessage(
         message: str = "No message"  # Message to display
     ):  # Returns a notification message hidden from the UI view
@@ -283,7 +295,7 @@ def NotiButton(
         )
     )
 
-# %% ../nbs/05_chat_ui.ipynb 27
+# %% ../nbs/05_chat_ui.ipynb 32
 # Event listener to handle notifications when the element #notification is loaded
 noti_script = Script("""
     // Automatically click the hidden button to connect to the notification websocket
@@ -312,7 +324,7 @@ noti_script = Script("""
     });
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 30
+# %% ../nbs/05_chat_ui.ipynb 35
 scroll_script = Script("""
   // Function to scroll to the bottom of an element
   function scrollToBottom(element) {
@@ -331,13 +343,13 @@ scroll_script = Script("""
   observer.observe(expandingElement, { childList: true, subtree: true });
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 31
+# %% ../nbs/05_chat_ui.ipynb 36
 title_script = Script("""
     // Function to set the title of the page
     document.title = "LLMCAM";
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 32
+# %% ../nbs/05_chat_ui.ipynb 37
 @app.get('/')
 async def index(session):
     # Initialize the session
@@ -382,7 +394,7 @@ async def index(session):
         data_theme="wireframe",
         cls="h-[100vh] w-full relative flex flex-row items-stretch overflow-hidden transition-colors z-0 p-0",)
 
-# %% ../nbs/05_chat_ui.ipynb 34
+# %% ../nbs/05_chat_ui.ipynb 39
 def noti_disconnect(ws):
     """Remove session ID from session notification sender on websocket disconnect"""
     session_id = ws.scope.get("session_id")
@@ -393,7 +405,7 @@ def noti_disconnect(ws):
     if session_id in session_notis:
         del session_notis[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 35
+# %% ../nbs/05_chat_ui.ipynb 40
 @app.ws('/wsnoti')
 async def wsnoti(ws, send, session_id: str):
     # Initialize the session
@@ -422,7 +434,7 @@ async def wsnoti(ws, send, session_id: str):
     # Send a notification to the client
     send_noti("Notification service enabled.")
 
-# %% ../nbs/05_chat_ui.ipynb 39
+# %% ../nbs/05_chat_ui.ipynb 44
 # On websocket disconnect, remove the session ID from the session messages and tools
 def chat_disconnect(ws):
     """Remove session ID from session messages and tools on websocket disconnect"""
@@ -432,7 +444,7 @@ def chat_disconnect(ws):
     if session_id in session_tools:
         del session_tools[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 40
+# %% ../nbs/05_chat_ui.ipynb 45
 # The chatbot websocket handler
 @app.ws('/wschat', disconn=chat_disconnect)
 async def wschat(ws, msg: str, send, session_id: str):
@@ -477,7 +489,7 @@ By default, stop stream after one notification sent."))
     await send(Div(ToolPanel(session_id=session_id), hx_swap_oob='true', id='toollist'))
     return
 
-# %% ../nbs/05_chat_ui.ipynb 42
+# %% ../nbs/05_chat_ui.ipynb 47
 # Serve files from the 'data' directory
 @app.get("/data/{file_name:path}")
 async def get_file(file_name: str):
@@ -488,7 +500,7 @@ async def get_file(file_name: str):
         return FileResponse(file_path)
     return {"error": f"File '{file_name}' not found"}
 
-# %% ../nbs/05_chat_ui.ipynb 44
+# %% ../nbs/05_chat_ui.ipynb 49
 import asyncio
 import time
 
