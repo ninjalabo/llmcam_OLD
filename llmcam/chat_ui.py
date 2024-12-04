@@ -270,6 +270,8 @@ def ActionPanel(
         ActionButton(session_id,
             "Extract information from a YouTube Live", 
             "Capture and extract information from a YouTube Live. Use the default link."),
+        A('YouTube Playlist (Examples)', href='https://www.youtube.com/watch?v=BuyqWfyhvgE&list=PLNzPo4P4-KZOJEwDrywdUt8IryV06viqg&index=8', target='_blank'),
+
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
@@ -373,7 +375,7 @@ title_script = Script("""
     document.title = "LLMCAM";
 """)
 
-# %% ../nbs/05_chat_ui.ipynb 37
+# %% ../nbs/05_chat_ui.ipynb 38
 @app.get('/')
 async def index(session):
     # Initialize the session
@@ -415,12 +417,13 @@ async def index(session):
         noti_script,
         title_script,
         sidebar,
+        #a('Click here', href='https://example.com', target='_blank'),
         page, 
         title="Chatbot",
         data_theme="wireframe",
         cls="h-[100vh] w-full relative flex flex-row items-stretch overflow-hidden transition-colors z-0 p-0",)
 
-# %% ../nbs/05_chat_ui.ipynb 39
+# %% ../nbs/05_chat_ui.ipynb 40
 def noti_disconnect(ws):
     """Remove session ID from session notification sender on websocket disconnect"""
     session_id = ws.scope.get("session_id")
@@ -430,7 +433,7 @@ def noti_disconnect(ws):
             noti.stop()
         del session_notis[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 40
+# %% ../nbs/05_chat_ui.ipynb 41
 @app.ws('/wsnoti')
 async def wsnoti(ws, send, session_id: str):
     # Initialize the session
@@ -459,7 +462,7 @@ async def wsnoti(ws, send, session_id: str):
     # Send a notification to the client
     send_noti("Notification service enabled.")
 
-# %% ../nbs/05_chat_ui.ipynb 44
+# %% ../nbs/05_chat_ui.ipynb 45
 # On websocket disconnect, remove the session ID from the session messages and tools
 def chat_disconnect(ws):
     """Remove session ID from session messages and tools on websocket disconnect"""
@@ -469,7 +472,7 @@ def chat_disconnect(ws):
     if session_id in session_tools:
         del session_tools[session_id]
 
-# %% ../nbs/05_chat_ui.ipynb 45
+# %% ../nbs/05_chat_ui.ipynb 46
 # The chatbot websocket handler
 @app.ws('/wschat', disconn=chat_disconnect)
 async def wschat(ws, msg: str, send, session_id: str):
@@ -513,7 +516,7 @@ Use the available tools to stop stream or send notifications from the stream."))
     await send(Div(ToolPanel(session_id=session_id), hx_swap_oob='true', id='toollist'))
     return
 
-# %% ../nbs/05_chat_ui.ipynb 47
+# %% ../nbs/05_chat_ui.ipynb 48
 # Serve files from the 'data' directory
 @app.get("/data/{file_name:path}")
 async def get_file(file_name: str):
@@ -524,7 +527,7 @@ async def get_file(file_name: str):
         return FileResponse(file_path)
     return {"error": f"File '{file_name}' not found"}
 
-# %% ../nbs/05_chat_ui.ipynb 49
+# %% ../nbs/05_chat_ui.ipynb 50
 import asyncio
 import time
 
