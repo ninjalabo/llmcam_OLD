@@ -22,6 +22,12 @@ website:
       - 82_demo_scenario_2.ipynb
       - 83_demo_scenario_3.ipynb
       - 90_railway_example.ipynb
+      - section: Core
+        contents:
+          - Core/01_fn_to_fc.ipynb
+          - Core/02_oas_to_requests.ipynb
+          - Core/03_class_to_oas.ipynb
+          - Core/04_oas_to_fc.ipynb
       - section: Vision
         contents:
           - Vision/01_ytlive.ipynb
