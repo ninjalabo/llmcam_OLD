@@ -22,3 +22,10 @@ website:
       - 82_demo_scenario_2.ipynb
       - 83_demo_scenario_3.ipynb
       - 90_railway_example.ipynb
+      - section: Vision
+        contents:
+          - Vision/01_ytlive.ipynb
+          - Vision/02_gpt4v.ipynb
+          - Vision/03_yolo_to_fc.ipynb
+          - Vision/04_dtcam.ipynb
+          - Vision/05_plotting.ipynb
