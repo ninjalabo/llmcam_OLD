@@ -28,6 +28,13 @@ website:
           - Core/02_oas_to_requests.ipynb
           - Core/03_class_to_oas.ipynb
           - Core/04_oas_to_fc.ipynb
+      - section: Utils
+        contents:
+          - Utils/01_store.ipynb
+          - Utils/02_downloader.ipynb
+          - Utils/03_fle_manager.ipynb
+          - Utils/04_notification.ipynb
+          - Utils/05_bash_command.ipynb
       - section: Vision
         contents:
           - Vision/01_ytlive.ipynb
