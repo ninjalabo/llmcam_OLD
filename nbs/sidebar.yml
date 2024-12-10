@@ -7,6 +7,7 @@ website:
           - Application/01_chat_ui.ipynb
       - section: Core
         contents:
+          - Core/00_fc_exec.ipynb
           - Core/01_fn_to_fc.ipynb
           - Core/02_oas_to_requests.ipynb
           - Core/03_class_to_oas.ipynb
