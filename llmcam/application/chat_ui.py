@@ -19,16 +19,16 @@ from fasthtml.common import *
 from fastcore.parallel import startthread
 from typing import Callable, Optional
 
-from ..fn_to_fc import capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file
-from ..fn_to_fc import tool_schema, complete, form_msg
-from ..store import add_api_tools, add_function_tools, remove_tools
-from ..store import execute_handler_core, handler_schema
-from ..yolo import detect_objects
-from ..dtcam import *
-from ..file_manager import list_image_files, list_detection_files
-from ..plotting import plot_object
-from ..notification import notification_stream_core, process_notification_schema, StreamThread
-from ..bash_command import *
+from ..core.fn_to_fc import capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file
+from ..core.fn_to_fc import tool_schema, complete, form_msg
+from ..utils.store import add_api_tools, add_function_tools, remove_tools
+from ..utils.store import execute_handler_core, handler_schema
+from ..vision.yolo import detect_objects
+from ..vision.dtcam import *
+from ..utils.file_manager import list_image_files, list_detection_files
+from ..vision.plotting import plot_object
+from ..utils.notification import notification_stream_core, process_notification_schema, StreamThread
+from ..utils.bash_command import *
 
 # %% ../../nbs/Application/01_chat_ui.ipynb 6
 # Set up database for information per session
@@ -536,7 +536,7 @@ def llmcam_chatbot(
         port=5001,  # The port to listen on
     ):
     # Import app from chat_ui base module
-    from llmcam.chat_ui import app
+    from llmcam.application.chat_ui import app
 
     # Initialize session tools and execute handler
     session_tools = {}

@@ -6,9 +6,9 @@
 __all__ = ['plot_object']
 
 # %% ../../nbs/Vision/05_plotting.ipynb 3
-from ..file_manager import list_image_files, list_plot_files
-from ..yolo import detect_objects
-from ..fn_to_fc import tool_schema, complete, form_msgs, print_msgs, ask_gpt4v_about_image_file
+from ..utils.file_manager import list_image_files, list_plot_files
+from .yolo import detect_objects
+from ..core.fn_to_fc import tool_schema, complete, form_msgs, print_msgs, ask_gpt4v_about_image_file
 import os
 import json
 import matplotlib.pyplot as plt

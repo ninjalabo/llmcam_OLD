@@ -2,32 +2,21 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_core.ipynb
-      - 01_ytlive.ipynb
-      - 02_gpt4v.ipynb
-      - 03_class_to_oas.ipynb
-      - 04_oas_to_requests.ipynb
-      - 05_chat_ui.ipynb
-      - 06_fn_to_fc.ipynb
-      - 07_yolo_to_fc.ipynb
-      - 08_oas_to_fc.ipynb
-      - 10_store.ipynb
-      - 11_downloader.ipynb
-      - 12_dtcam.ipynb
-      - 13_fle_manager.ipynb
-      - 14_plotting.ipynb
-      - 15_notification.ipynb
-      - 16_bash_command.ipynb
-      - 81_demo_scenario_1.ipynb
-      - 82_demo_scenario_2.ipynb
-      - 83_demo_scenario_3.ipynb
-      - 90_railway_example.ipynb
+      - section: Application
+        contents:
+          - Application/01_chat_ui.ipynb
       - section: Core
         contents:
           - Core/01_fn_to_fc.ipynb
           - Core/02_oas_to_requests.ipynb
           - Core/03_class_to_oas.ipynb
           - Core/04_oas_to_fc.ipynb
+      - section: Demos
+        contents:
+          - Demos/01_demo_scenario_1.ipynb
+          - Demos/02_demo_scenario_2.ipynb
+          - Demos/03_demo_scenario_3.ipynb
+          - Demos/04_railway_example.ipynb
       - section: Utils
         contents:
           - Utils/01_store.ipynb

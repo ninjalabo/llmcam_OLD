@@ -6,8 +6,8 @@
 __all__ = ['oas_to_fc']
 
 # %% ../../nbs/Core/04_oas_to_fc.ipynb 2
-from ..oas_to_requests import *
-from ..fn_to_fc import *
+from .oas_to_requests import *
+from .fn_to_fc import *
 
 # %% ../../nbs/Core/04_oas_to_fc.ipynb 3
 import os

@@ -18,8 +18,8 @@ import warnings
 
 from typing import Optional, Union, Callable, Literal,  Tuple
 from types import NoneType
-from ..ytlive import YTLive, NHsta
-from ..gpt4v import ask_gpt4v
+from ..vision.ytlive import YTLive, NHsta
+from ..vision.gpt4v import ask_gpt4v
 
 import textwrap
 from colorama import Fore, Back, Style

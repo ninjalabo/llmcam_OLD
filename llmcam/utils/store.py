@@ -11,8 +11,8 @@ import yaml
 import json
 import os
 
-from ..oas_to_requests import *
-from ..fn_to_fc import *
+from ..core.oas_to_requests import *
+from ..core.fn_to_fc import *
 from typing import Optional, Callable
 
 # %% ../../nbs/Utils/01_store.ipynb 5
@@ -63,7 +63,7 @@ def add_api_tools(
 # %% ../../nbs/Utils/01_store.ipynb 22
 from importlib import import_module
 from typing import Callable, Any
-from ..fn_to_fc import tool_schema
+from ..core.fn_to_fc import tool_schema
 
 # %% ../../nbs/Utils/01_store.ipynb 24
 def add_function_tools(

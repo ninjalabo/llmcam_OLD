@@ -10,7 +10,7 @@ __all__ = ['StreamThread', 'notification_stream_core', 'default_stream_starter',
 from threading import Thread, Event
 import time
 from typing import Optional, Callable
-from ..fn_to_fc import complete, tool_schema
+from ..core.fn_to_fc import complete, tool_schema
 
 # %% ../../nbs/Utils/04_notification.ipynb 4
 # Define the stream thread class
