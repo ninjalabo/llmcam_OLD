@@ -11,8 +11,8 @@ website:
           - Core/02_fn_to_fc.ipynb
           - Core/02_fn_to_schema.ipynb
           - Core/03_oas_to_requests.ipynb
+          - Core/03_oas_to_schema.ipynb
           - Core/04_class_to_oas.ipynb
-          - Core/05_oas_to_fc.ipynb
       - section: Demos
         contents:
           - Demos/01_demo_scenario_1.ipynb
