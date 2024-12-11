@@ -70,7 +70,7 @@ Start by importing our modules:
 
 ``` python
 from llmcam.vision.ytlive import NHsta
-from llmcam.vision.gpt4v import ask_gpt4v
+from llmcam.vision.gpt4v import ask_gpt4v_about_image_file
 from llmcam.application.chat_ui import llmcam_chatbot
 ```
 
