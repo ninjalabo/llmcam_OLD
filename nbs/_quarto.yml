@@ -18,5 +18,37 @@ website:
     search: true
   sidebar:
     style: floating
+    contents:
+      - index.ipynb
+      - section: Core
+        contents:
+          - core/01_fc_exec.ipynb
+          - core/02_fn_to_schema.ipynb
+          - core/03_oas_to_schema.ipynb
+          - core/04_class_to_oas.ipynb
+      - section: Utils
+        contents:
+          - utils/01_store.ipynb
+          - utils/02_file_manager.ipynb
+          - utils/03_notification.ipynb
+          - utils/04_bash_command.ipynb
+      - section: Vision
+        contents:
+          - vision/01_ytlive.ipynb
+          - vision/02_gpt4v.ipynb
+          - vision/03_yolo.ipynb
+          - vision/04_dtcam.ipynb
+          - vision/05_plotting.ipynb
+      - section: Application
+        contents:
+          - application/01_session.ipynb
+          - application/02_chat_ui.ipynb
+          - application/03_runner.ipynb
+      - section: Demos
+        contents:
+          - demos/01_demo_scenario_1.ipynb
+          - demos/02_demo_scenario_2.ipynb
+          - demos/03_demo_scenario_3.ipynb
+          - demos/04_railway_example.ipynb
 
-metadata-files: [nbdev.yml, sidebar.yml]
+metadata-files: [nbdev.yml]

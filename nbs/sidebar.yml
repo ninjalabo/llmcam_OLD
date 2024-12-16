@@ -2,33 +2,33 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - section: Core
+      - section: application
         contents:
-          - Core/01_fc_exec.ipynb
-          - Core/02_fn_to_schema.ipynb
-          - Core/03_oas_to_schema.ipynb
-          - Core/04_class_to_oas.ipynb
-      - section: Utils
+          - application/01_session.ipynb
+          - application/02_chat_ui.ipynb
+          - application/03_runner.ipynb
+      - section: core
         contents:
-          - Utils/01_store.ipynb
-          - Utils/02_file_manager.ipynb
-          - Utils/03_notification.ipynb
-          - Utils/04_bash_command.ipynb
-      - section: Vision
+          - core/01_fc_exec.ipynb
+          - core/02_fn_to_schema.ipynb
+          - core/03_oas_to_schema.ipynb
+          - core/04_class_to_oas.ipynb
+      - section: demos
         contents:
-          - Vision/01_ytlive.ipynb
-          - Vision/02_gpt4v.ipynb
-          - Vision/03_yolo.ipynb
-          - Vision/04_dtcam.ipynb
-          - Vision/05_plotting.ipynb
-      - section: Application
+          - demos/01_demo_scenario_1.ipynb
+          - demos/02_demo_scenario_2.ipynb
+          - demos/03_demo_scenario_3.ipynb
+          - demos/04_railway_example.ipynb
+      - section: utils
         contents:
-          - Application/01_session.ipynb
-          - Application/02_chat_ui.ipynb
-          - Application/03_runner.ipynb
-      - section: Demos
+          - utils/01_store.ipynb
+          - utils/02_file_manager.ipynb
+          - utils/03_notification.ipynb
+          - utils/04_bash_command.ipynb
+      - section: vision
         contents:
-          - Demos/01_demo_scenario_1.ipynb
-          - Demos/02_demo_scenario_2.ipynb
-          - Demos/03_demo_scenario_3.ipynb
-          - Demos/04_railway_example.ipynb
+          - vision/01_ytlive.ipynb
+          - vision/02_gpt4v.ipynb
+          - vision/03_yolo.ipynb
+          - vision/04_dtcam.ipynb
+          - vision/05_plotting.ipynb
