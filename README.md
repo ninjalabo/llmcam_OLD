@@ -71,7 +71,7 @@ Start by importing our modules:
 ``` python
 from llmcam.vision.ytlive import NHsta
 from llmcam.vision.gpt4v import ask_gpt4v_about_image_file
-from llmcam.application.chat_ui import llmcam_chatbot
+from llmcam.application.runner import run_llmcam
 ```
 
 ``` python
@@ -90,7 +90,7 @@ fn
     Path('../data/cap_2024.11.11_17:58:09_unclear.jpg')
 
 ``` python
-ask_gpt4v(fn)
+ask_gpt4v_about_image_file(fn)
 ```
 
     {'timestamp': '2024-10-30T21:55:57',
@@ -108,5 +108,5 @@ ask_gpt4v(fn)
 
 ``` python
 # Start the application on port 5001
-llmcam_chatbot()
+run_llmcam()
 ```

@@ -191,7 +191,7 @@ def execute_start_notification_stream(function_name, session_id, messages, **kwa
     return start_notification_stream(session_id, messages)
 
 # %% ../../nbs/Application/01_session.ipynb 28
-# Set up default tools
+# Set up default tools from our `llmcam.utils` and `llmcam.vision` modules.
 default_tools = [function_schema(fn) for fn in (
     capture_youtube_live_frame, 
     ask_gpt4v_about_image_file,

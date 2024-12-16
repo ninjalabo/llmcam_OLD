@@ -5,21 +5,16 @@
 # %% auto 0
 __all__ = ['hdrs', 'app', 'noti_script', 'scroll_script', 'title_script', 'ChatMessage', 'ChatInput', 'ActionButton',
            'ActionPanel', 'ToolPanel', 'NotiMessage', 'NotiButton', 'index', 'noti_disconnect', 'wsnoti',
-           'chat_disconnect', 'wschat', 'get_file', 'llmcam_chatbot']
+           'chat_disconnect', 'wschat', 'get_file']
 
 # %% ../../nbs/Application/02_chat_ui.ipynb 4
-import uvicorn
-import uuid
 import os
 import asyncio
 from fasthtml.common import *
-from fastcore.parallel import startthread
-from typing import Callable, Optional
-
 from ..core.fc import *
 from .session import *
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 6
+# %% ../../nbs/Application/02_chat_ui.ipynb 5
 # Set up the app, including daisyui and tailwind for the chat component
 hdrs = (picolink,
         Link(rel="icon", href=f"""{os.getenv("LLMCAM_DATA", "../data").split("/")[-1]}/favicon.ico""", type="image/png"),
@@ -35,7 +30,7 @@ hdrs = (picolink,
         MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']))
 app = FastHTML(hdrs=hdrs, exts="ws")
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 8
+# %% ../../nbs/Application/02_chat_ui.ipynb 10
 # Chat message component (renders a chat bubble)
 def ChatMessage(
         msg: str,  # Message to display
@@ -52,7 +47,7 @@ def ChatMessage(
                 )
             )
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 11
+# %% ../../nbs/Application/02_chat_ui.ipynb 13
 # The input field for the user message. Also used to clear the
 # input field after sending a message via an OOB swap
 def ChatInput():  # Returns an input field for the user message
@@ -61,7 +56,7 @@ def ChatInput():  # Returns an input field for the user message
                  hx_swap_oob='true'  # Re-render the element to remove submitted message
                 )
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 14
+# %% ../../nbs/Application/02_chat_ui.ipynb 16
 def ActionButton(
         session_id: str,  # Session ID to use
         content: str,  # Text to display on the button
@@ -95,7 +90,7 @@ def ActionPanel(
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 18
+# %% ../../nbs/Application/02_chat_ui.ipynb 20
 def ToolPanel(
         session_id: str  # Session ID to use
     ):  # Returns a panel of usable tools
@@ -118,7 +113,7 @@ def ToolPanel(
         cls="flex flex-col h-fit gap-4 py-4 px-4"
     )
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 21
+# %% ../../nbs/Application/02_chat_ui.ipynb 23
 def NotiMessage(
         message: str = "No message"  # Message to display
     ):  # Returns a notification message hidden from the UI view
@@ -141,7 +136,7 @@ def NotiButton(
         )
     )
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 22
+# %% ../../nbs/Application/02_chat_ui.ipynb 24
 # Event listener to handle notifications when the element #notification is loaded
 noti_script = Script("""
     // Automatically click the hidden button to connect to the notification websocket
@@ -170,7 +165,7 @@ noti_script = Script("""
     });
 """)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 25
+# %% ../../nbs/Application/02_chat_ui.ipynb 27
 scroll_script = Script("""
   // Function to scroll to the bottom of an element
   function scrollToBottom(element) {
@@ -189,13 +184,13 @@ scroll_script = Script("""
   observer.observe(expandingElement, { childList: true, subtree: true });
 """)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 26
+# %% ../../nbs/Application/02_chat_ui.ipynb 28
 title_script = Script("""
     // Function to set the title of the page
     document.title = "LLMCAM";
 """)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 28
+# %% ../../nbs/Application/02_chat_ui.ipynb 30
 @app.get('/')
 async def index(session):
     # Initialize the session
@@ -243,13 +238,13 @@ async def index(session):
         data_theme="wireframe",
         cls="h-[100vh] w-full relative flex flex-row items-stretch overflow-hidden transition-colors z-0 p-0",)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 30
+# %% ../../nbs/Application/02_chat_ui.ipynb 32
 def noti_disconnect(ws):
     """Remove session ID from session notification sender on websocket disconnect"""
     session_id = ws.scope.get("session_id")
     remove_session(session_id)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 31
+# %% ../../nbs/Application/02_chat_ui.ipynb 33
 @app.ws('/wsnoti')
 async def wsnoti(ws, send, session_id: str):
     # Initialize the session
@@ -278,14 +273,14 @@ async def wsnoti(ws, send, session_id: str):
     # Send a notification to the client
     send_noti("Notification service enabled.")
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 35
+# %% ../../nbs/Application/02_chat_ui.ipynb 37
 # On websocket disconnect, remove the session ID from the session messages and tools
 def chat_disconnect(ws):
     """Remove session ID from session messages and tools on websocket disconnect"""
     session_id = ws.scope.get("session_id")
     remove_session(session_id)
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 36
+# %% ../../nbs/Application/02_chat_ui.ipynb 38
 # The chatbot websocket handler
 @app.ws('/wschat', disconn=chat_disconnect)
 async def wschat(ws, msg: str, send, session_id: str):
@@ -325,7 +320,7 @@ Use the available tools to stop stream or send notifications from the stream."))
     await send(Div(ToolPanel(session_id=session_id), hx_swap_oob='true', id='toollist'))
     return
 
-# %% ../../nbs/Application/02_chat_ui.ipynb 38
+# %% ../../nbs/Application/02_chat_ui.ipynb 40
 # Serve files from the 'data' directory
 @app.get("/data/{file_name:path}")
 async def get_file(file_name: str):
@@ -335,18 +330,3 @@ async def get_file(file_name: str):
     if file_path.exists():
         return FileResponse(file_path)
     return {"error": f"File '{file_name}' not found"}
-
-# %% ../../nbs/Application/02_chat_ui.ipynb 40
-import asyncio
-import time
-
-def llmcam_chatbot(
-        host="0.0.0.0",  # The host to listen on
-        port=5001,  # The port to listen on
-    ):
-    # Import app from chat_ui base module
-    from llmcam.application.chat_ui import app
-    
-    server = uvicorn.Server(uvicorn.Config(app, host=host, port=port))
-    async def async_run_server(server): await server.serve()
-    asyncio.run(async_run_server(server))
