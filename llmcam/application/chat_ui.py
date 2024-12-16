@@ -20,16 +20,15 @@ from fastcore.parallel import startthread
 from typing import Callable, Optional
 
 from ..core.fc import *
-from ..core.fn_to_schema import function_schema
-from ..utils.store import add_api_tools, add_function_tools, remove_tools
-from ..utils.store import execute_handler_core, handler_schema
-from ..vision.ytlive import capture_youtube_live_frame
-from ..vision.gpt4v import ask_gpt4v_about_image_file
-from ..vision.yolo import detect_objects
+from ..core.fn_to_schema import *
+from ..utils.store import *
+from ..vision.ytlive import *
+from ..vision.gpt4v import *
+from ..vision.yolo import *
 from ..vision.dtcam import *
-from ..utils.file_manager import list_image_files, list_detection_files
-from ..vision.plotting import plot_object
-from ..utils.notification import notification_stream_core, process_notification_schema, StreamThread
+from ..utils.file_manager import *
+from ..vision.plotting import *
+from ..utils.notification import *
 from ..utils.bash_command import *
 
 # %% ../../nbs/Application/01_chat_ui.ipynb 6
@@ -510,7 +509,7 @@ Use the available tools to stop stream or send notifications from the stream."))
     await send(ChatInput())  # Clear the input field
     
     # Add the user's message to the chat history
-    complete(messages, session_tools[session_id])
+    await asyncio.to_thread(complete, messages, session_tools[session_id])
     await send(Div(ChatMessage(
             messages[-1]["content"],
             messages[-1]["role"] == "user"), hx_swap_oob='beforeend', id="chatlist"))
