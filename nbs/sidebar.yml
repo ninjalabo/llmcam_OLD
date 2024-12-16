@@ -5,12 +5,11 @@ website:
       - section: Application
         contents:
           - Application/01_chat_ui.ipynb
+          - Application/01_session.ipynb
       - section: Core
         contents:
           - Core/01_fc_exec.ipynb
-          - Core/02_fn_to_fc.ipynb
           - Core/02_fn_to_schema.ipynb
-          - Core/03_oas_to_requests.ipynb
           - Core/03_oas_to_schema.ipynb
           - Core/04_class_to_oas.ipynb
       - section: Demos
@@ -22,10 +21,9 @@ website:
       - section: Utils
         contents:
           - Utils/01_store.ipynb
-          - Utils/02_downloader.ipynb
-          - Utils/03_fle_manager.ipynb
-          - Utils/04_notification.ipynb
-          - Utils/05_bash_command.ipynb
+          - Utils/02_file_manager.ipynb
+          - Utils/03_notification.ipynb
+          - Utils/04_bash_command.ipynb
       - section: Vision
         contents:
           - Vision/01_ytlive.ipynb
