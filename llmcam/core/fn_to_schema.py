@@ -137,6 +137,6 @@ def function_schema(
     }
 
     # Apply fixup function if provided
-    if fixup: function['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
+    if fixup: tool_schema['function']['fixup'] = f"{fixup.__module__}.{fixup.__name__}"
     
     return tool_schema
