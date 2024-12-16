@@ -2,22 +2,12 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - section: Application
-        contents:
-          - Application/01_chat_ui.ipynb
-          - Application/01_session.ipynb
       - section: Core
         contents:
           - Core/01_fc_exec.ipynb
           - Core/02_fn_to_schema.ipynb
           - Core/03_oas_to_schema.ipynb
           - Core/04_class_to_oas.ipynb
-      - section: Demos
-        contents:
-          - Demos/01_demo_scenario_1.ipynb
-          - Demos/02_demo_scenario_2.ipynb
-          - Demos/03_demo_scenario_3.ipynb
-          - Demos/04_railway_example.ipynb
       - section: Utils
         contents:
           - Utils/01_store.ipynb
@@ -31,3 +21,14 @@ website:
           - Vision/03_yolo.ipynb
           - Vision/04_dtcam.ipynb
           - Vision/05_plotting.ipynb
+      - section: Application
+        contents:
+          - Application/01_session.ipynb
+          - Application/02_chat_ui.ipynb
+          - Application/03_runner.ipynb
+      - section: Demos
+        contents:
+          - Demos/01_demo_scenario_1.ipynb
+          - Demos/02_demo_scenario_2.ipynb
+          - Demos/03_demo_scenario_3.ipynb
+          - Demos/04_railway_example.ipynb
