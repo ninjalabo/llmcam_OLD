@@ -11,6 +11,7 @@ from threading import Thread, Event
 import time
 from typing import Optional, Callable
 from ..core.fc import *
+from ..core.fn_to_schema import function_schema
 
 # %% ../../nbs/Utils/03_notification.ipynb 14
 # Define the stream thread class
