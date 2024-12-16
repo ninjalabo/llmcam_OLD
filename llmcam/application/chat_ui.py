@@ -19,10 +19,12 @@ from fasthtml.common import *
 from fastcore.parallel import startthread
 from typing import Callable, Optional
 
-from ..core.fn_to_fc import capture_youtube_live_frame_and_save, ask_gpt4v_about_image_file
-from ..core.fn_to_fc import tool_schema, complete, form_msg
+from ..core.fc import *
+from ..core.fn_to_schema import function_schema
 from ..utils.store import add_api_tools, add_function_tools, remove_tools
 from ..utils.store import execute_handler_core, handler_schema
+from ..vision.ytlive import capture_youtube_live_frame
+from ..vision.gpt4v import ask_gpt4v_about_image_file
 from ..vision.yolo import detect_objects
 from ..vision.dtcam import *
 from ..utils.file_manager import list_image_files, list_detection_files
@@ -38,8 +40,8 @@ session_notis = {}  # Sender and notification streams for each session
 
 # %% ../../nbs/Application/01_chat_ui.ipynb 7
 # Set up default tools
-default_tools = [tool_schema(fn) for fn in (
-    capture_youtube_live_frame_and_save, 
+default_tools = [function_schema(fn) for fn in (
+    capture_youtube_live_frame, 
     ask_gpt4v_about_image_file,
     detect_objects,
     cap,
