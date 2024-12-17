@@ -6,12 +6,12 @@
 __all__ = ['form_msg', 'form_msgs', 'print_msg', 'print_msgs', 'fn_name', 'fn_args', 'fn_metadata', 'fn_exec',
            'fn_result_content', 'complete']
 
-# %% ../../nbs/core/01_fc_exec.ipynb 24
+# %% ../../nbs/core/01_fc_exec.ipynb 26
 import textwrap
 from colorama import Fore, Back, Style
 from typing import Literal, Optional
 
-# %% ../../nbs/core/01_fc_exec.ipynb 25
+# %% ../../nbs/core/01_fc_exec.ipynb 27
 def form_msg(
     role: Literal["system", "user", "assistant", "tool"],  # The role of the message sender
     content: str,  # The content of the message
@@ -32,7 +32,7 @@ def form_msgs(
     """Form a list of messages for the conversation"""
     return [{"role":m[0],"content":m[1]} for m in msgs]    
 
-# %% ../../nbs/core/01_fc_exec.ipynb 28
+# %% ../../nbs/core/01_fc_exec.ipynb 30
 def print_msg(
     msg: dict  # The message to print with role and content
 ):
@@ -55,12 +55,12 @@ def print_msgs(
             continue
         print_msg(msg)    
 
-# %% ../../nbs/core/01_fc_exec.ipynb 32
+# %% ../../nbs/core/01_fc_exec.ipynb 34
 import importlib
 import json
 import openai
 
-# %% ../../nbs/core/01_fc_exec.ipynb 33
+# %% ../../nbs/core/01_fc_exec.ipynb 35
 # Support functions to handle tool response,where call == response.choices[0].message.tool_calls[i]
 def fn_name(call): return call["function"]["name"]
 def fn_args(call): return json.loads(call["function"]["arguments"])
@@ -95,7 +95,7 @@ def fn_result_content(call, tools=[]):
     content.update({fn_name(call): fn_exec(call, tools)})
     return json.dumps(content)
 
-# %% ../../nbs/core/01_fc_exec.ipynb 34
+# %% ../../nbs/core/01_fc_exec.ipynb 36
 def complete(
         messages: list[dict],  # The list of messages
         tools: list[dict] = [],  # The list of tools

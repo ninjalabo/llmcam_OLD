@@ -5,14 +5,14 @@
 # %% auto 0
 __all__ = ['extract_parameter_comments', 'param_converter', 'function_schema']
 
-# %% ../../nbs/core/02_fn_to_schema.ipynb 7
+# %% ../../nbs/core/02_fn_to_schema.ipynb 9
 import ast
 import inspect
 
 from types import NoneType
 from typing import Optional, Union, Callable, Literal,  Tuple
 
-# %% ../../nbs/core/02_fn_to_schema.ipynb 9
+# %% ../../nbs/core/02_fn_to_schema.ipynb 11
 # Extract parameter comments from the function
 def extract_parameter_comments(
         func: Callable  # Function to extract comments from
@@ -40,7 +40,7 @@ def extract_parameter_comments(
                             comments[arg_name] = comment
     return comments
 
-# %% ../../nbs/core/02_fn_to_schema.ipynb 15
+# %% ../../nbs/core/02_fn_to_schema.ipynb 17
 def param_converter(
         param_type,  # The type of the parameter
         description  # The description of the parameter
@@ -85,7 +85,7 @@ def param_converter(
     # For any other types, set the type to string and pass the description
     return { "type": "string", "description": description }
 
-# %% ../../nbs/core/02_fn_to_schema.ipynb 20
+# %% ../../nbs/core/02_fn_to_schema.ipynb 22
 def function_schema(
         func: Callable,  # The function to generate the schema for
         service_name: Optional[str] = None,  # The name of the service

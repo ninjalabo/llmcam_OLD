@@ -6,14 +6,14 @@
 __all__ = ['StreamThread', 'default_stream_starter', 'default_stream_stopper', 'notification_stream_core',
            'process_notification_schema']
 
-# %% ../../nbs/utils/03_notification.ipynb 13
+# %% ../../nbs/utils/03_notification.ipynb 14
 from threading import Thread, Event
 import time
 from typing import Optional, Callable
 from ..core.fc import *
 from ..core.fn_to_schema import function_schema
 
-# %% ../../nbs/utils/03_notification.ipynb 14
+# %% ../../nbs/utils/03_notification.ipynb 15
 # Define the stream thread class
 class StreamThread(Thread):
     """A class to run a notification stream in a separate thread"""
@@ -37,7 +37,7 @@ class StreamThread(Thread):
     def stop(self):
         self.stop_event.set()
 
-# %% ../../nbs/utils/03_notification.ipynb 17
+# %% ../../nbs/utils/03_notification.ipynb 18
 def default_stream_starter(tools, messages):
     """Default function to start the notifications stream"""
     global stream_thread
@@ -54,7 +54,7 @@ def default_stream_stopper():
     stream_thread.stop()
     stream_thread.join()
 
-# %% ../../nbs/utils/03_notification.ipynb 19
+# %% ../../nbs/utils/03_notification.ipynb 20
 def notification_stream_core(
     tools: list,  # Tools to use
     messages: list,  # Previous conversation with the user
@@ -82,7 +82,7 @@ def notification_stream_core(
 
     return 'Notifications stream started'
 
-# %% ../../nbs/utils/03_notification.ipynb 21
+# %% ../../nbs/utils/03_notification.ipynb 22
 def process_notification_schema(
     start_notifications_stream: Callable,  # Function to start the notifications stream
 ):
