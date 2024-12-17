@@ -13,7 +13,7 @@ import requests
 import yaml
 from typing import Callable, Optional
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 6
+# %% ../../nbs/core/03_oas_to_schema.ipynb 7
 def load_oas(
     oas_url: str,  # OpenAPI Specification URL
     destination: str,  # Destination file
@@ -39,7 +39,7 @@ def load_oas(
         else:
             raise ValueError("Invalid file format")
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 13
+# %% ../../nbs/core/03_oas_to_schema.ipynb 15
 MIME_TYPES = {
     "text": [
         "plain",
@@ -145,7 +145,7 @@ def retrieve_ref_parts(refs: str):
 
     return parts
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 15
+# %% ../../nbs/core/03_oas_to_schema.ipynb 17
 def extract_refs(
     oas: dict  # The OpenAPI schema
 ) -> dict:  # The extracted references (flattened)
@@ -236,7 +236,7 @@ def extract_refs(
 
     return flatten_refs
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 22
+# %% ../../nbs/core/03_oas_to_schema.ipynb 24
 # Directly transferable properties from OAS to GPT-compatible schema
 TRANSFERABLE_TYPES = [
     "type", "description", "default", "enum", "pattern", "additionalProperties",
@@ -311,7 +311,7 @@ def transform_property(
     return {k: v for k, v in new_prop.items() if v is not None}, required
 
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 30
+# %% ../../nbs/core/03_oas_to_schema.ipynb 32
 def generate_request(
     function_name: str,  # The name of the function
     url: str,  # The URL of the request
@@ -351,7 +351,7 @@ def generate_request(
     except:
         return {"message": response.text}
 
-# %% ../../nbs/core/03_oas_to_schema.ipynb 33
+# %% ../../nbs/core/03_oas_to_schema.ipynb 35
 def api_schema(
     base_url: str,  # The base URL of the API
     oas: dict,  # The OpenAPI schema
