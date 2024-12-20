@@ -46,9 +46,9 @@ website:
           - application/03_runner.ipynb
       - section: Demos
         contents:
+          - demos/00_demo_scenario_0.ipynb
           - demos/01_demo_scenario_1.ipynb
           - demos/02_demo_scenario_2.ipynb
           - demos/03_demo_scenario_3.ipynb
-          - demos/04_railway_example.ipynb
 
 metadata-files: [nbdev.yml]

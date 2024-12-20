@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 def plot_object(
     images: list[str],  # List of images to be extracted
     object: str,  # Object to detect
-    methods: list[str] = ["gpt", "yolo"],  # List of methods to use for extracting information
+    methods: list[str] = ["gpt", "yolo"],  # List of methods to use for extracting information. The available methods are "gpt" and "yolo"
 ):
     """
     Generate (only when requested) a bar plot displaying the number of instances of a specified object detected in a list of images, accepting only objects in singular form.
