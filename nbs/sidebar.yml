@@ -15,6 +15,7 @@ website:
           - core/04_class_to_oas.ipynb
       - section: demos
         contents:
+          - demos/00_demo_scenario_0.ipynb
           - demos/01_demo_scenario_1.ipynb
           - demos/02_demo_scenario_2.ipynb
           - demos/03_demo_scenario_3.ipynb
