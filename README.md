@@ -66,6 +66,11 @@ $ cd /path/to/llmcam/repository
 $ pip install -e . ['dev']
 ```
 
+Set up environment with necessary variables:
+
+- `OPENAI_API_KEY`: Key for using GPT chat completion API from OpenAI.  
+- `LLMCAM_DATA`: Local directory for saving generated images to.
+
 Start by importing our modules:
 
 ``` python
