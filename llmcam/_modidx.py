@@ -164,5 +164,7 @@ d = { 'settings': { 'branch': 'main',
                                       'llmcam.vision.ytlive.frame_to_text': ('vision/ytlive.html#frame_to_text', 'llmcam/vision/ytlive.py'),
                                       'llmcam.vision.ytlive.known': ('vision/ytlive.html#known', 'llmcam/vision/ytlive.py'),
                                       'llmcam.vision.ytlive.meta': ('vision/ytlive.html#meta', 'llmcam/vision/ytlive.py'),
+                                      'llmcam.vision.ytlive.select_youtube_live_url': ( 'vision/ytlive.html#select_youtube_live_url',
+                                                                                        'llmcam/vision/ytlive.py'),
                                       'llmcam.vision.ytlive.show_frame': ('vision/ytlive.html#show_frame', 'llmcam/vision/ytlive.py'),
                                       'llmcam.vision.ytlive.stream_url': ('vision/ytlive.html#stream_url', 'llmcam/vision/ytlive.py')}}}
