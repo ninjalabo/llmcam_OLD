@@ -4,7 +4,8 @@
 
 # %% auto 0
 __all__ = ['nakyma_helsinki_known_places', 'nakyma_helsinkigista_youtube_live_url', 'ydl_opts', 'stream_url', 'show_frame',
-           'crop_frame', 'frame_to_text', 'known', 'meta', 'fname', 'YTLive', 'NHsta', 'capture_youtube_live_frame']
+           'crop_frame', 'frame_to_text', 'known', 'meta', 'fname', 'YTLive', 'NHsta', 'capture_youtube_live_frame',
+           'select_youtube_live_url']
 
 # %% ../../nbs/vision/01_ytlive.ipynb 3
 from datetime import datetime
@@ -152,3 +153,18 @@ def capture_youtube_live_frame(
     else:
         live = NHsta()
     return str(live())
+
+# %% ../../nbs/vision/01_ytlive.ipynb 38
+# Define the function for selecting Youtube Live URL
+def select_youtube_live_url(
+        location: Optional[str] = "Helsinki",  # Location name, one of ["santaclausvillage", "parkinglot", "helsinki", "satellite"]
+    ):
+    """Select the Youtube Live URL based on the location name"""
+    if "santa" in location.lower():
+        return "https://www.youtube.com/watch?v=Cp4RRAEgpeU"
+    if "parking" in location.lower():
+        return "https://www.youtube.com/watch?v=mwN6l3O1MNI"
+    if "satellite" in location.lower():
+        return "https://www.youtube.com/watch?v=xRPjKQtRXR8"
+    else:
+        return "https://www.youtube.com/watch?v=LMZQ7eFhm58"
