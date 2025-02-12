@@ -47,7 +47,7 @@ def plot_object(
     if gpt:
         for image in images:
             image = work_dir + "/" + image.split("/")[-1]
-            info = ask_gpt4v_about_image_file(image)
+            info = json.loads(ask_gpt4v_about_image_file(image))
             count_gpt.append(info.get(object, 0))
 
     # Plot the number of objects detected per image
