@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Python module for capturing images from YouTube live">
+
+<title>YouTube Live Capture – ninjalabo.llmcam</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-0652833b129a4aecb7d8777fd89a11f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="YouTube Live Capture – ninjalabo.llmcam">
+<meta property="og:description" content="Python module for capturing images from YouTube live">
+<meta property="og:image" content="https://ninjalabo.github.io/llmcam/vision/01_ytlive_files/figure-html/cell-10-output-2.png">
+<meta property="og:site_name" content="ninjalabo.llmcam">
+<meta property="og:image:height" content="51">
+<meta property="og:image:width" content="515">
+<meta name="twitter:title" content="YouTube Live Capture – ninjalabo.llmcam">
+<meta name="twitter:description" content="Python module for capturing images from YouTube live">
+<meta name="twitter:image" content="https://ninjalabo.github.io/llmcam/vision/01_ytlive_files/figure-html/cell-10-output-2.png">
+<meta name="twitter:image-height" content="51">
+<meta name="twitter:image-width" content="515">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">ninjalabo.llmcam</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vision/ytlive.html">Vision</a></li><li class="breadcrumb-item"><a href="../vision/ytlive.html">YouTube Live Capture</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">llmcam</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Core</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core/fc_exec.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function Calling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core/fn_to_schema.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function to Tool Schema</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core/oas_to_schema.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OAS to Tool Schema</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core/class_to_oas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">class -&gt; OAS</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Utils</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/store.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Store</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/file_manager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">File Manager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/notification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/bash_command.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Execute bash commands</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Vision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vision/ytlive.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">YouTube Live Capture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vision/gpt4v.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ask GPT-4v</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vision/yolo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">YOLO</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vision/dtcam.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DTCam</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vision/plotting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plots from GPT</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Application</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../application/session.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Browser session</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../application/chat_ui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat UI in fastHTML</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../application/runner.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Runner</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Demos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/demo_scenario_0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Demo Scenario 0</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/demo_scenario_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Demo Scenario 1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/demo_scenario_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Demo Scenario 2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/demo_scenario_3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Demo Scenario 3</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#youtube-live-capture-experiment" id="toc-youtube-live-capture-experiment" class="nav-link active" data-scroll-target="#youtube-live-capture-experiment">Youtube Live Capture experiment</a>
+  <ul class="collapse">
+  <li><a href="#stream_url" id="toc-stream_url" class="nav-link" data-scroll-target="#stream_url">stream_url</a></li>
+  <li><a href="#show_frame" id="toc-show_frame" class="nav-link" data-scroll-target="#show_frame">show_frame</a></li>
+  <li><a href="#crop_frame" id="toc-crop_frame" class="nav-link" data-scroll-target="#crop_frame">crop_frame</a></li>
+  <li><a href="#frame_to_text" id="toc-frame_to_text" class="nav-link" data-scroll-target="#frame_to_text">frame_to_text</a></li>
+  <li><a href="#known" id="toc-known" class="nav-link" data-scroll-target="#known">known</a></li>
+  <li><a href="#meta" id="toc-meta" class="nav-link" data-scroll-target="#meta">meta</a></li>
+  <li><a href="#fname" id="toc-fname" class="nav-link" data-scroll-target="#fname">fname</a></li>
+  </ul></li>
+  <li><a href="#modularize-with-live-instances" id="toc-modularize-with-live-instances" class="nav-link" data-scroll-target="#modularize-with-live-instances">Modularize with Live instances</a>
+  <ul class="collapse">
+  <li><a href="#general-live-instance" id="toc-general-live-instance" class="nav-link" data-scroll-target="#general-live-instance">General Live instance</a></li>
+  <li><a href="#ytlive" id="toc-ytlive" class="nav-link" data-scroll-target="#ytlive">YTLive</a></li>
+  <li><a href="#näkymä-helsingistä-live-instance" id="toc-näkymä-helsingistä-live-instance" class="nav-link" data-scroll-target="#näkymä-helsingistä-live-instance">Näkymä Helsingistä Live instance</a></li>
+  <li><a href="#nhsta" id="toc-nhsta" class="nav-link" data-scroll-target="#nhsta">NHsta</a></li>
+  <li><a href="#general-purpose-function-for-function-calling" id="toc-general-purpose-function-for-function-calling" class="nav-link" data-scroll-target="#general-purpose-function-for-function-calling">General-purpose function for Function calling</a></li>
+  <li><a href="#capture_youtube_live_frame" id="toc-capture_youtube_live_frame" class="nav-link" data-scroll-target="#capture_youtube_live_frame">capture_youtube_live_frame</a></li>
+  <li><a href="#utility-function-for-default-youtube-links" id="toc-utility-function-for-default-youtube-links" class="nav-link" data-scroll-target="#utility-function-for-default-youtube-links">Utility function for default Youtube Links</a></li>
+  <li><a href="#select_youtube_live_url" id="toc-select_youtube_live_url" class="nav-link" data-scroll-target="#select_youtube_live_url">select_youtube_live_url</a></li>
+  </ul></li>
+  <li><a href="#simulated-gpt-workflow" id="toc-simulated-gpt-workflow" class="nav-link" data-scroll-target="#simulated-gpt-workflow">Simulated GPT workflow</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ninjalabo/llmcam/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ytlive.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vision/ytlive.html">Vision</a></li><li class="breadcrumb-item"><a href="../vision/ytlive.html">YouTube Live Capture</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">YouTube Live Capture</h1>
+</div>
+
+<div>
+  <div class="description">
+    Python module for capturing images from YouTube live
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="youtube-live-capture-experiment" class="level2">
+<h2 class="anchored" data-anchor-id="youtube-live-capture-experiment">Youtube Live Capture experiment</h2>
+<p>This experiment focuses on capturing Youtube Live from public cameras monitoring multiple Näkymä Helsingistä locations. We can first extract information about the Youtube Live using the library <code>yt_dlp</code>.</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L48" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="stream_url" class="level3">
+<h3 class="anchored" data-anchor-id="stream_url">stream_url</h3>
+<blockquote class="blockquote">
+<pre><code> stream_url (ytlive_url:str, ydl_opts:dict)</code></pre>
+</blockquote>
+<div id="f2a64f27" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>stream_url(nakyma_helsinkigista_youtube_live_url, ydl_opts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: skipping cookie file entry due to invalid length 1: '&lt;&lt;&lt;&lt;&lt;&lt;&lt; Updated upstream\n'
+WARNING: skipping cookie file entry due to invalid length 1: '=======\n'
+WARNING: skipping cookie file entry due to invalid length 1: '&lt;&lt;&lt;&lt;&lt;&lt;&lt; Updated upstream\n'
+WARNING: skipping cookie file entry due to invalid length 1: '=======\n'
+WARNING: skipping cookie file entry due to invalid length 1: '&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stashed changes\n'
+WARNING: skipping cookie file entry due to invalid length 1: '&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stashed changes\n'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/watch?v=LMZQ7eFhm58
+[youtube] LMZQ7eFhm58: Downloading webpage
+[youtube] LMZQ7eFhm58: Downloading ios player API JSON
+[youtube] LMZQ7eFhm58: Downloading tv player API JSON
+[youtube] LMZQ7eFhm58: Downloading m3u8 information</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1737066322/ei/8jKJZ-nWNJyp0u8Ph4j02Qc/ip/82.130.25.234/id/LMZQ7eFhm58.5/itag/232/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgovp/gir%3Dyes%3Bitag%3D136/rqh/1/hdlc/1/hls_chunk_host/rr2---sn-ovgq0oxu-5goe.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/3600/manifest_duration/3600/bui/AY2Et-Mi4NLCHEnUJHV_9eqYR8g08BW8IZfGiBVX_kOGk7D2vzSK7U1SO_4Hb_pv0W5mLfmOnwsBer6x/spc/9kzgDYpIzXWTvXc1Vu_1AvYIGD9IHtRMn__-I56lIB7V9sJ72F0P/vprv/1/playlist_type/DVR/initcwndbps/4483750/met/1737044723,/mh/l8/mm/44/mn/sn-ovgq0oxu-5goe/ms/lva/mv/m/mvi/2/pl/18/rms/lva,lva/dover/13/pacing/0/short_key/1/keepalive/yes/fexp/51326932,51335594,51353498,51371294,51384461/mt/1737044203/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgovp,rqh,hdlc,xpc,playlist_duration,manifest_duration,bui,spc,vprv,playlist_type/sig/AJfQdSswRQIhANUtoKCOb5u3JtOLa2QGQR5RQKdJ5PyDc9j8CbfWfBO2AiBaU_ySIFkC7dvK2VlOBWeKwYWtBITdimZW6sScNBTttw%3D%3D/lsparams/hls_chunk_host,initcwndbps,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/AGluJ3MwRgIhAOk99P4NUNKgNCKsLE11eZe62AeQ_6DPuvxkKxi3sr7cAiEAmVHKhNZ1OZV3HpKU5L71VjOY5SkV05GYwJblbKW-nEk%3D/playlist/index.m3u8'</code></pre>
+</div>
+</div>
+<p>At this point, we have obtained a special link for downloading captures from this livestream. This URL is a dynamically generated link used by YouTube for delivering live streaming content via an HLS (HTTP Live Streaming) protocol. We can proceed to donwload content chunks from this link with <code>cv2</code>.</p>
+<p><strong>NOTE</strong>: This livestream contains a small frame at top left corner to display the current time and location. We can attempt to crop this small frame and extract further information from the captured image.</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="show_frame" class="level3">
+<h3 class="anchored" data-anchor-id="show_frame">show_frame</h3>
+<blockquote class="blockquote">
+<pre><code> show_frame (frame)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L65" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="crop_frame" class="level3">
+<h3 class="anchored" data-anchor-id="crop_frame">crop_frame</h3>
+<blockquote class="blockquote">
+<pre><code> crop_frame (frame, crop=(0, 0, 480, 30))</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L70" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="frame_to_text" class="level3">
+<h3 class="anchored" data-anchor-id="frame_to_text">frame_to_text</h3>
+<blockquote class="blockquote">
+<pre><code> frame_to_text (frame)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="known" class="level3">
+<h3 class="anchored" data-anchor-id="known">known</h3>
+<blockquote class="blockquote">
+<pre><code> known (txt:str, known_places:str)</code></pre>
+</blockquote>
+<p><em>Try to find one of <code>known_places</code> are included in the given <code>txt</code></em></p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L82" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="meta" class="level3">
+<h3 class="anchored" data-anchor-id="meta">meta</h3>
+<blockquote class="blockquote">
+<pre><code> meta (frame, known_places=['Olympiaterminaali', 'Etelasatama',
+       'Eteladsatama', 'Presidentinlinna', 'Tuomiokirkko', 'Kauppatori',
+       'Kauppator', 'Torni', 'Valkosaari'], printing=False)</code></pre>
+</blockquote>
+<p><em>Withdraw meta data, datetime &amp; place</em></p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="fname" class="level3">
+<h3 class="anchored" data-anchor-id="fname">fname</h3>
+<blockquote class="blockquote">
+<pre><code> fname (prefix, dt, pl)</code></pre>
+</blockquote>
+<p>Test workflow combining the above utilities and try saving the downloaded file in a local directory:</p>
+<div id="ea32ec3a-8e2e-4138-961c-ccab9f2bd169" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> stream_url(nakyma_helsinkigista_youtube_live_url, ydl_opts)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(url)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ret:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Cropped frame:"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    show_frame(crop_frame(frame))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Text in cropped frame:"</span>, frame_to_text(crop_frame(frame)))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        file_name <span class="op">=</span> fname(<span class="st">"cap_"</span>, <span class="op">*</span>meta(crop_frame(frame), printing<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span>:</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        file_name <span class="op">=</span> fname(<span class="st">"fail_"</span>, datetime.now(), <span class="st">"nowhere"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"File name:"</span>, file_name)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> Path(os.getenv(<span class="st">"LLMCAM_DATA"</span>, <span class="st">"../data"</span>))<span class="op">/</span>file_name</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    path.parent.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    cv2.imwrite(path, frame)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Saved to:"</span>, path)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Failed to capture frame."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/watch?v=LMZQ7eFhm58
+[youtube] LMZQ7eFhm58: Downloading webpage
+[youtube] LMZQ7eFhm58: Downloading ios player API JSON
+[youtube] LMZQ7eFhm58: Downloading tv player API JSON
+[youtube] LMZQ7eFhm58: Downloading m3u8 information
+Cropped frame:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_ytlive_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Text in cropped frame: 16.01.2025 18:16:24 Tuomiokirkko
+16.01.2025 18:16:24 Tuomiokirkko
+File name: cap_2025.01.16_18:16:24_Tuomiokirkko.jpg
+Saved to: /home/nghivo/tinyMLaaS/llmcam/data/cap_2025.01.16_18:16:24_Tuomiokirkko.jpg</code></pre>
+</div>
+</div>
+<p>As such, we can follow this guideline for implementing the modularized functions:</p>
+<ol type="1">
+<li>Extract HSL URL from Youtube Live<br>
+</li>
+<li>Capture live images with this URL<br>
+</li>
+<li>Crop small frame and extract further metadata from captured images<br>
+</li>
+<li>Form suitable file names and save captured images</li>
+</ol>
+</section>
+</section>
+<section id="modularize-with-live-instances" class="level2">
+<h2 class="anchored" data-anchor-id="modularize-with-live-instances">Modularize with Live instances</h2>
+<p>This section implements the modularized functions with Object-Oriented Programming approach (OOP). Each Youtube Live is managed by a <a href="https://ninjalabo.github.io/llmcam/vision/ytlive.html#ytlive"><code>YTLive</code></a> instance, which captures images from its live stream when prompted.</p>
+<section id="general-live-instance" class="level3">
+<h3 class="anchored" data-anchor-id="general-live-instance">General Live instance</h3>
+<p><strong>NOTE</strong>: For a generic Youtube Live stream, step 3 in the described workflow is skipped and file name is generated as a combination of the current timestamp and user-input location.</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L98" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ytlive" class="level3">
+<h3 class="anchored" data-anchor-id="ytlive">YTLive</h3>
+<blockquote class="blockquote">
+<pre><code> YTLive (url:str, data_dir:Optional[pathlib.Path]=Path('../data'),
+         place:Optional[str]='nowhere')</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>url</td>
+<td>str</td>
+<td></td>
+<td>YouTube Live URL</td>
+</tr>
+<tr class="even">
+<td>data_dir</td>
+<td>Optional</td>
+<td>../data</td>
+<td>Directory to store captured images</td>
+</tr>
+<tr class="odd">
+<td>place</td>
+<td>Optional</td>
+<td>nowhere</td>
+<td>Location name</td>
+</tr>
+</tbody>
+</table>
+<p>Test usage with a different live stream of Santa Claus Village:</p>
+<div id="fe8727de-0a9d-4776-a9a3-1b78bcd32411" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>SantaClausVillage <span class="op">=</span> YTLive(url<span class="op">=</span><span class="st">"https://www.youtube.com/live/Cp4RRAEgpeU?si=IwqJ4QU1Umv9PdgW"</span>, place<span class="op">=</span><span class="st">"santaclausvillage"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span> <span class="op">=</span> SantaClausVillage()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File path:"</span>, <span class="bu">file</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/live/Cp4RRAEgpeU?si=IwqJ4QU1Umv9PdgW
+[youtube] Cp4RRAEgpeU: Downloading webpage
+[youtube] Cp4RRAEgpeU: Downloading ios player API JSON
+[youtube] Cp4RRAEgpeU: Downloading tv player API JSON
+[youtube] Cp4RRAEgpeU: Downloading m3u8 information
+
+File path: /home/nghivo/tinyMLaaS/llmcam/data/cap_2025.01.16_18:25:30_santaclausvillage.jpg</code></pre>
+</div>
+</div>
+</section>
+<section id="näkymä-helsingistä-live-instance" class="level3">
+<h3 class="anchored" data-anchor-id="näkymä-helsingistä-live-instance">Näkymä Helsingistä Live instance</h3>
+<p>We also add a special support for Näkymä Helsingistä livestream that utilizes the small frame at top left corner to extract metadata and generate file names. This is a subclass that inherits all other functions from <a href="https://ninjalabo.github.io/llmcam/vision/ytlive.html#ytlive"><code>YTLive</code></a> while modifying the <code>file_name</code> function.</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L127" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="nhsta" class="level3">
+<h3 class="anchored" data-anchor-id="nhsta">NHsta</h3>
+<blockquote class="blockquote">
+<pre><code> NHsta (url:Optional[str]='https://www.youtube.com/watch?v=LMZQ7eFhm58',
+        data_dir:Optional[pathlib.Path]=Path('../data'),
+        place:Optional[str]='unclear')</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>url</td>
+<td>Optional</td>
+<td>https://www.youtube.com/watch?v=LMZQ7eFhm58</td>
+<td>YouTube Live URL</td>
+</tr>
+<tr class="even">
+<td>data_dir</td>
+<td>Optional</td>
+<td>../data</td>
+<td>Directory to store captured images</td>
+</tr>
+<tr class="odd">
+<td>place</td>
+<td>Optional</td>
+<td>unclear</td>
+<td>Location name if OCR fails</td>
+</tr>
+</tbody>
+</table>
+<p>Test usage:</p>
+<div id="df986d48-2050-4cfc-a26a-bad288dd56d8" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>NakymaHelsingista <span class="op">=</span> NHsta()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span> <span class="op">=</span> NakymaHelsingista()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File path:"</span>, <span class="bu">file</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/watch?v=LMZQ7eFhm58
+[youtube] LMZQ7eFhm58: Downloading webpage
+[youtube] LMZQ7eFhm58: Downloading ios player API JSON
+[youtube] LMZQ7eFhm58: Downloading tv player API JSON
+[youtube] LMZQ7eFhm58: Downloading m3u8 information
+16.01.2025 18:16:29 Tuomiokirkko
+
+File path: /home/nghivo/tinyMLaaS/llmcam/data/cap_2025.01.16_18:16:29_Tuomiokirkko.jpg</code></pre>
+</div>
+</div>
+<p>Try showing the cropped small frame from saved file:</p>
+<div id="00b07988-941a-4c13-a9fa-2162c3c87834" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crop_image(path, crop<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">480</span>, <span class="dv">30</span>)): <span class="cf">return</span> Image.<span class="bu">open</span>(path).crop(crop)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_image(path):</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    plt.imshow(crop_image(path))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">'off'</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>show_image(<span class="bu">file</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_ytlive_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="general-purpose-function-for-function-calling" class="level3">
+<h3 class="anchored" data-anchor-id="general-purpose-function-for-function-calling">General-purpose function for Function calling</h3>
+<p>For simplification purpose, we implement a general-purpose function that initiate these Live instances and download file to be used in GPT Function calling:</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L145" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="capture_youtube_live_frame" class="level3">
+<h3 class="anchored" data-anchor-id="capture_youtube_live_frame">capture_youtube_live_frame</h3>
+<blockquote class="blockquote">
+<pre><code> capture_youtube_live_frame (link:Optional[str]=None,
+                             place:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Capture a jpeg image from YouTube Live and return the path to the saved image</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>link</td>
+<td>Optional</td>
+<td>None</td>
+<td>YouTube Live link</td>
+</tr>
+<tr class="even">
+<td>place</td>
+<td>Optional</td>
+<td>None</td>
+<td>Location of live image</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>str</strong></td>
+<td></td>
+<td><strong>Path to the saved image</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="utility-function-for-default-youtube-links" class="level3">
+<h3 class="anchored" data-anchor-id="utility-function-for-default-youtube-links">Utility function for default Youtube Links</h3>
+<p>Utility function for saving and retrieving some notable Youtube links.</p>
+<hr>
+<p><a href="https://github.com/ninjalabo/llmcam/blob/main/llmcam/vision/ytlive.py#L159" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="select_youtube_live_url" class="level3">
+<h3 class="anchored" data-anchor-id="select_youtube_live_url">select_youtube_live_url</h3>
+<blockquote class="blockquote">
+<pre><code> select_youtube_live_url (location:Optional[str]='Helsinki')</code></pre>
+</blockquote>
+<p><em>Select the Youtube Live URL based on the location name</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>location</td>
+<td>Optional</td>
+<td>Helsinki</td>
+<td>Location name, one of [“santaclausvillage”, “parkinglot”, “helsinki”, “satellite”]</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="simulated-gpt-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="simulated-gpt-workflow">Simulated GPT workflow</h2>
+<p>Test integrating with our current GPT framework:</p>
+<div id="9a37b21a" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> llmcam.core.fc <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> llmcam.core.fn_to_schema <span class="im">import</span> function_schema</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> [function_schema(capture_youtube_live_frame, <span class="st">"Youtube Live Capture"</span>)]</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> form_msgs([</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"system"</span>, <span class="st">"You are a helpful system administrator. Use the supplied tools to assist the user."</span>),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"user"</span>, <span class="st">"Hi, can you capture YouTube Live?"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>complete(messages, tools)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>print_msgs(messages)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&gt;&gt; System:
+You are a helpful system administrator. Use the supplied tools to assist the user.
+&gt;&gt; User:
+Hi, can you capture YouTube Live?
+&gt;&gt; Assistant:
+Yes, I can capture an image from a YouTube Live stream. Please provide the YouTube Live link, and if
+applicable, specify the location or place you want the image to represent.</code></pre>
+</div>
+</div>
+<div id="cb2738e6" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Continue the conversation</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>messages.append(form_msg(<span class="st">"user"</span>, <span class="st">"You can use the default link."</span>))</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>complete(messages, tools<span class="op">=</span>tools)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>print_msgs(messages)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/watch?v=LMZQ7eFhm58
+[youtube] LMZQ7eFhm58: Downloading webpage
+[youtube] LMZQ7eFhm58: Downloading ios player API JSON
+[youtube] LMZQ7eFhm58: Downloading tv player API JSON
+[youtube] LMZQ7eFhm58: Downloading m3u8 information
+16.01.2025 18:16:39 Tuomiokirkko
+&gt;&gt; System:
+You are a helpful system administrator. Use the supplied tools to assist the user.
+&gt;&gt; User:
+Hi, can you capture YouTube Live?
+&gt;&gt; Assistant:
+Yes, I can capture an image from a YouTube Live stream. Please provide the YouTube Live link, and if
+applicable, specify the location or place you want the image to represent.
+&gt;&gt; User:
+You can use the default link.
+&gt;&gt; Assistant:
+I have captured an image from the default YouTube Live stream. You can view it
+[here](sandbox:/home/nghivo/tinyMLaaS/llmcam/data/cap_2025.01.16_18:16:39_Tuomiokirkko.jpg).</code></pre>
+</div>
+</div>
+<p>Another scenario (selecting with location):</p>
+<div id="a3d895d7" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> llmcam.core.fc <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> llmcam.core.fn_to_schema <span class="im">import</span> function_schema</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> [</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    function_schema(capture_youtube_live_frame, <span class="st">"Youtube Live Capture"</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    function_schema(select_youtube_live_url, <span class="st">"Select Youtube Live URL"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> form_msgs([</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"system"</span>, <span class="st">"You are a helpful system administrator. Use the supplied tools to assist the user."</span>),</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"user"</span>, <span class="st">"Hi, can you capture an image from Santa Claus Village?"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>complete(messages, tools)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>print_msgs(messages)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[youtube] Extracting URL: https://www.youtube.com/watch?v=Cp4RRAEgpeU
+[youtube] Cp4RRAEgpeU: Downloading webpage
+[youtube] Cp4RRAEgpeU: Downloading ios player API JSON
+[youtube] Cp4RRAEgpeU: Downloading tv player API JSON
+[youtube] Cp4RRAEgpeU: Downloading m3u8 information
+&gt;&gt; System:
+You are a helpful system administrator. Use the supplied tools to assist the user.
+&gt;&gt; User:
+Hi, can you capture an image from Santa Claus Village?
+&gt;&gt; Assistant:
+I've captured an image from Santa Claus Village for you. You can view it here: [Santa Claus Village
+Live
+Image](sandbox:/home/nghivo/tinyMLaaS/llmcam/data/cap_2025.01.16_18:25:47_santaclausvillage.jpg).</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ninjalabo\.github\.io\/llmcam");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ninjalabo/llmcam/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
